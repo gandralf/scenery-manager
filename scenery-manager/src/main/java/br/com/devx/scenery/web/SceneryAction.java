@@ -97,10 +97,12 @@ public class SceneryAction extends Action {
             template = "/" + template; // JSP exige o "/" no inicio
         }
 
-        for (int i = 0; i < m_templateHandlers.length; i++) {
+        boolean handled = false;
+        for (int i = 0; i < m_templateHandlers.length && !handled; i++) {
             TemplateHandler templateHandler = m_templateHandlers[i];
             if (templateHandler.canHandle(template)) {
                 templateHandler.handle(template, encoding, request, response, templateAdapter, adapt);
+                handled = true;
             }
         }
     }
