@@ -1,0 +1,9 @@
+otherAdapter = {
+    message = "Hello again...";
+};
+
+stringValue = "Hello, world!";
+
+collectionValue = collection: {
+    789, 1011, { message = "Hello again..."; }
+};

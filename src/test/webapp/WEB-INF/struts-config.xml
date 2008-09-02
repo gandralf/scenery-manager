@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+          "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+<struts-config>
+    <action-mappings>
+        <action path="/strutsSample" type="br.com.devx.scenery.web.SceneryAction">
+            <forward name="success" path="strutsSuccess.jsp"/>
+            <forward name="failure" path="strutsFailure.jsp"/>
+            <forward name="velocity" path="strutsSuccess.vm"/>
+        </action>
+    </action-mappings>
+
+    <message-resources parameter="br.com.devx.scenery.ApplicationResources"/>
+</struts-config>

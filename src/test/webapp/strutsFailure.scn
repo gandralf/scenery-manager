@@ -1,0 +1,8 @@
+_STRUTS_ERRORS = collection: {
+    { key = "some.error"; },
+    { key = "another.error"; }
+};
+
+otherAdapter = {
+    message = "Hello again...";
+};

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+    <servlet>
+        <servlet-name>SceneryServlet</servlet-name>
+        <servlet-class>br.com.devx.scenery.web.SceneryServlet</servlet-class>
+        <init-param>
+            <param-name>templateHandlers</param-name>
+            <param-value>br.com.devx.scenery.web.JspTemplateHandler, br.com.devx.scenery.web.VelocityTemplateHandler</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ActionServlet</servlet-name>
+        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>/WEB-INF/struts-config.xml</param-value>
+        </init-param>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>2</param-value>
+        </init-param>
+        <init-param>
+            <param-name>detail</param-name>
+            <param-value>2</param-value>
+        </init-param>
+        <init-param>
+            <param-name>templateHandlers</param-name>
+            <param-value>br.com.devx.scenery.web.JspTemplateHandler, br.com.devx.scenery.web.VelocityTemplateHandler</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ServletRedirector</servlet-name>
+        <servlet-class>org.apache.cactus.server.ServletTestRedirector</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ServletTestRunner</servlet-name>
+        <servlet-class>org.apache.cactus.server.runner.ServletTestRunner</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ActionServlet</servlet-name>
+        <url-pattern>/strutsSample.do</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SceneryServlet</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ServletRedirector</servlet-name>
+        <url-pattern>/ServletRedirector</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ServletTestRunner</servlet-name>
+        <url-pattern>/ServletTestRunner</url-pattern>
+    </servlet-mapping>
+</web-app>

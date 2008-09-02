@@ -1,0 +1,4 @@
+_STRUTS_ERRORS = collection: {
+    { key = "Some error"; },
+    { key = "Another error"; }
+};

@@ -1,0 +1,229 @@
+options {
+    STATIC = false;
+}
+
+PARSER_BEGIN(SceneryParser)
+package br.com.devx.scenery.parser;
+import br.com.devx.scenery.TemplateAdapter;
+
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Date;
+
+public class SceneryParser {
+    public TemplateAdapter parse() throws ParseException {
+        return scenery();
+    }
+
+    private class Property {
+        String name;
+        Object value;
+        Property(String name, Object value) {
+            this.name = name;
+            this.value = value;
+        }
+    }
+}
+
+PARSER_END(SceneryParser)
+
+SKIP: {
+    " " | "\t" | "\n" | "\r"
+}
+
+TOKEN: {
+    < NULL:  "null" > |
+    < TRUE:  "true" > |
+    < FALSE: "false" > |
+    < NEW: "new" > |
+    < COLON: ":" > |
+    < ID: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","0"-"9"] )* > |
+    < MAP_TYPE: "map:" > |
+    < ARRAY_TYPE: "array:" > |
+    < COLLECTION_TYPE: "collection:" > |
+    < CUSTOM_TYPE: <ID> ("." <ID>)* > |
+    < INT: ("-")?(["0"-"9"])+ > |
+    < DOUBLE: ("-")?<INT> "." <INT> > |
+    < DATE: <INT> "-" <INT> "-" <INT> > |
+    < TIME: <INT> ":" <INT> ( ":" <INT>)? > |
+    < EQUALS: "=" > |
+    < END_COMMAND: ";" > |
+    < LBRACE: "{" > |
+    < RBRACE: "}" > |
+    < LPAREN: "(" > |
+    < RPAREN: ")" >
+}
+
+MORE: {
+    "\"": WithinString
+}
+
+<WithinString> TOKEN: {
+    <STRING: "\"" >: DEFAULT
+}
+
+<WithinString> MORE: {
+    <~["\n","\r"]>
+}
+
+MORE: {
+    "<![CDATA[": WithinXString
+}
+
+<WithinXString> TOKEN: {
+    <XSTRING: "]]>">: DEFAULT
+}
+
+<WithinXString> MORE: {
+    <~[]>
+}
+
+TemplateAdapter scenery(): {
+    TemplateAdapter result;
+} {
+  result = propertySet()
+  <EOF>
+  { return result; }
+}
+
+TemplateAdapter propertySet(): {
+    TemplateAdapter result = new TemplateAdapter();
+    Property currentProperty;
+} {
+    ( currentProperty = property() <END_COMMAND> { result.put(currentProperty.name, currentProperty.value); } )*
+    { return result; }
+}
+
+Property property(): {
+    Token t;
+    String id;
+    Object propertyValue;
+} {
+    t = <ID> { id = t.image; } <EQUALS> propertyValue = value()
+    { return new Property(id, propertyValue); }
+}
+
+Object value(): {
+    Object result;
+} {
+    (
+        result = singleValue() |
+        result = arrayValue() |
+        result = collectionValue() |
+        result = mapValue() |
+        result = customValue()
+    ) { return result; }
+}
+
+Object singleValue(): {
+    Token t;
+    Object result;
+} {
+    (
+    LOOKAHEAD(2)
+    <NULL> { result = null; } |
+    <TRUE> { result = Boolean.TRUE; } |
+    <FALSE> { result = Boolean.FALSE; } |
+    t = <INT> { result = new Integer(t.image); } |
+    t = <DOUBLE> { result = new Double(t.image); } |
+    t = <STRING> { result = t.image.substring(1, t.image.length() -1); } |
+    t = <XSTRING> { result = t.image.substring(9, t.image.length() -3); } |
+    result = date() |
+    result = innerAdapter()
+    )
+    { return result; }
+}
+
+Date date(): {
+    Token date, time = null;
+} {
+    date = <DATE> [ time = <TIME> ]
+    { return SceneryParserHelper.toDate(date.image, time != null ? time.image : null); }
+}
+
+TemplateAdapter innerAdapter(): {
+    TemplateAdapter result;
+} {
+    <LBRACE> result = propertySet() <RBRACE>
+    { return result; }
+}
+
+Object arrayValue(): {
+    Token t;
+    ArrayList arr = new ArrayList();
+    Object result;
+    Object item;
+} {
+    <ARRAY_TYPE>
+    <LBRACE> [
+        ( t = <INT> { arr.add(new Integer(t.image)); }  ( "," t = <INT> { arr.add(new Integer(t.image)); } )* ) |
+        ( t = <DOUBLE> { arr.add(new Double(t.image)); } ( "," t = <DOUBLE> { arr.add(new Double(t.image)); } )* ) |
+        ( ( <TRUE> { arr.add(Boolean.TRUE); } | <FALSE> { arr.add(Boolean.FALSE); } )
+            ( "," ( <TRUE> { arr.add(Boolean.TRUE); } | <FALSE> { arr.add(Boolean.FALSE); } ) )* ) |
+        ( t = <STRING> { arr.add(t.image.substring(1, t.image.length()-1)); } ( "," t = <STRING> { arr.add(t.image.substring(1, t.image.length()-1)); } )* ) |
+        ( t = <XSTRING> { arr.add(t.image.substring(9, t.image.length()-3)); } ( "," t = <XSTRING> { arr.add(t.image.substring(9, t.image.length()-3)); } )* ) |
+        ( item = date() { arr.add(item); } ( "," item = date() { arr.add(item); } )* ) |
+        ( item = innerAdapter() { arr.add(item); } ( "," item = innerAdapter() { arr.add(item); } )* ) |
+        ( item = arrayValue() { arr.add(item); } ( "," item = arrayValue() { arr.add(item); } )* ) |
+        ( item = collectionValue() { arr.add(item); } ( "," item = collectionValue() { arr.add(item); } )* ) |
+        ( item = mapValue() { arr.add(item); } ( "," item = mapValue() { arr.add(item); } )* )
+    ] <RBRACE> {
+        result = SceneryParserHelper.makeArray(arr);
+        return result;
+    }
+}
+
+Collection collectionValue(): {
+    Object item;
+    Collection result = new ArrayList();
+} {
+    <COLLECTION_TYPE>
+    <LBRACE> [
+        item = value() { result.add(item); } ( "," item = value() { result.add(item); } )*
+    ] <RBRACE>
+    { return result; }
+}
+
+Map mapValue(): {
+    Object itemKey, itemValue;
+    HashMap result = new HashMap();
+} {
+    <MAP_TYPE>
+    <LBRACE> [
+        ( itemKey = key() "=" itemValue = value() { result.put(itemKey, itemValue); } )
+            ("," itemKey = key() "=" itemValue = value() { result.put(itemKey, itemValue); } )*
+    ] <RBRACE>
+    { return result; }
+}
+
+Object key(): {
+    Object result;
+} {
+    result = value()
+    { return result; }
+}
+
+Object customValue(): {
+    String customClassName;
+    TemplateAdapter properties;
+    Collection constructorParameters;
+    Object item;
+    Object result;
+    Token t;
+} {
+    (
+        <NEW> t = <CUSTOM_TYPE> {
+            customClassName = t.image;
+            constructorParameters = new ArrayList();
+        }
+        <LPAREN> [
+            item = value() { constructorParameters.add(item); }
+            ("," item = value() { constructorParameters.add(item); })*
+        ] <RPAREN> {
+            result = SceneryParserHelper.newCustomType(customClassName, constructorParameters);
+        }
+        [ properties = innerAdapter() { properties.assignTo(result); } ]
+    ) { return result; }
+}

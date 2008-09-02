@@ -1,0 +1,12 @@
+userName="Alexandre, o Gandra";
+date = 2002-12-13 15:50;
+usedSpace = 1950.0;
+totalSpace = 2000.0;
+mailboxFull = true;
+
+emailList = collection: {
+    { subject = "Último";                   from = "fulano@bol.com";        date = 2002-12-12 10:30; },
+    { subject = "E-mail anonimo";           from = "";                      date = 2002-12-11 15:20; },
+    { subject = "Fraga volta para o Fed";   from = "Jose Soares";           date = 2002-12-10 23:10; },
+    { subject = "Esse eu agarantio!";       from = "c_harada@tpi.com.br";   date = 2002-12-10 18:00; }
+};

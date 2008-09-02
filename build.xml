@@ -1,0 +1,133 @@
+<project name="default" default="dist" basedir=".">
+    <property file="build.properties"/>
+    <property file="${user.home}/build.properties"/>
+    <property file="application.properties"/>
+
+    <property name="src.dir" location="src"/>
+    <property name="lib.dir" location="lib"/>
+    <property name="dist.dir" location="lib"/>
+    <property name="build.dir" location="target"/>
+    <property name="build.classes.dir" location="${build.dir}/classes"/>
+
+    <property name="commons-logging.jar" location="${struts.lib.dir}/commons-logging.jar"/>
+
+    <path id="compile.classpath">
+        <pathelement location="${j2ee.jar}"/>
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="all" depends="clean, dist" description="Clean build and dist, then compile"/>
+
+    <target name="clean" depends="clean-lib" description="Delete old build and dist directories">
+        <delete dir="${build.classes.dir}"/>
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="clean-lib" unless="keep-lib">
+        <delete dir="${lib.dir}"/>
+    </target>
+
+    <target name="lib" unless="keep-lib">
+        <mkdir dir="${lib.dir}"/>
+        <copy todir="${lib.dir}">
+            <fileset dir="${struts.lib.dir}">
+                <include name="**/*.jar"/>
+                <include name="**/*.tld"/>
+            </fileset>
+        </copy>
+        <copy file="${velocity.jar}" tofile="${lib.dir}/velocity.jar"/>
+        <copy file="${velocity-dep.jar}" tofile="${lib.dir}/velocity-dep.jar"/>
+        <copy file="${commons-logging.jar}" tofile="${lib.dir}/commons-logging.jar"/>
+    </target>
+
+    <target name="compile" depends="lib, javacc" description="Compile Java sources">
+        <mkdir dir="${build.classes.dir}"/>
+        <javac destdir="${build.classes.dir}" debug="true" deprecation="false" optimize="true" classpathref="compile.classpath">
+            <src path="${src.dir}"/>
+            <src path="${build.dir}/src"/>
+        </javac>
+        <copy todir="${build.classes.dir}">
+            <fileset dir="${src.dir}">
+                <exclude name="**/*.java"/>
+                <exclude name="**/CVS/*"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="initJavaCC">
+        <condition property="javaccBuild.required">
+            <not>
+                <uptodate srcfile="src/main/javacc/scenery.jj"
+                    targetfile="target/generated-sources/javacc/br/com/devx/scenery/parser/SceneryParser.java"/>
+            </not>
+        </condition>
+    </target>
+
+    <target name="javacc" depends="initJavaCC" if="javaccBuild.required">
+        <delete dir="target/generated-sources/javacc"/>
+        <mkdir dir="target/generated-sources/javacc"/>
+        <javacc target="src/main/javacc/scenery.jj"
+            outputdirectory="target/generated-sources/javacc/br/com/devx/scenery/parser"
+            javacchome="${javacc.home}"/>
+    </target>
+
+    <target name="dist" depends="compile">
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.dir}/${app.name}.jar" basedir="${build.classes.dir}"/>
+    </target>
+
+    <target name="release" depends="release-bin, release-src"/>
+
+    <target name="release-bin" depends="dist">
+        <property name="release.bin.dir" value="${build.dir}/scenery-manager-${app.version}"/>
+
+        <mkdir dir="${release.bin.dir}"/>
+        <mkdir dir="${release.bin.dir}/doc/api"/>
+        <javadoc destdir="${release.bin.dir}/doc/api"
+                windowtitle="Scenery Manager API"
+                classpathref="compile.classpath">
+            <packageset dir="${src.dir}" defaultexcludes="yes"/>
+            <packageset dir="${build.dir}/src" defaultexcludes="yes"/>
+        </javadoc>
+
+        <mkdir dir="${release.bin.dir}"/>
+        <jar destfile="${release.bin.dir}/src.jar">
+            <fileset dir="${src.dir}"/>
+            <fileset dir="${build.dir}/src"/>
+        </jar>
+
+        <copy todir="${release.bin.dir}">
+            <fileset dir="${basedir}">
+                <include name="web/**"/>
+            </fileset>
+        </copy>
+        <mkdir dir="${release.bin.dir}/lib"/>
+        <copy file="${dist.dir}/${app.name}.jar" tofile="${release.bin.dir}/lib/${app.name}.jar"/>
+
+        <tar tarfile="${build.dir}/scenery-manager-${app.version}.tar.gz"
+            basedir="${build.dir}"
+            includes="scenery-manager-${app.version}/**"
+            compression="gzip"/>
+    </target>
+
+    <target name="release-src" depends="dist">
+        <property name="release.src.dir" value="${build.dir}/scenery-manager-${app.version}-src"/>
+
+        <mkdir dir="${release.src.dir}"/>
+        <copy todir="${release.src.dir}">
+            <fileset dir="${basedir}">
+                <include name="src/**"/>
+                <include name="web/**"/>
+                <include name="build.xml"/>
+                <include name="build.sample.properties"/>
+            </fileset>
+        </copy>
+
+        <tar tarfile="${build.dir}/scenery-manager-${app.version}-src.tar.gz"
+            basedir="${build.dir}"
+            includes="scenery-manager-${app.version}-src/**"
+            compression="gzip"/>
+    </target>
+</project>

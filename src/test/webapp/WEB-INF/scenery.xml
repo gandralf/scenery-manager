@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DOCTYPE scenery-manager SYSTEM "./../../../doc/scenery.dtd" -->
+<scenery-manager>
+    <scenery-set uri="mailbox.do" template="mailbox/mailbox.jsp" data="mailbox/mailbox.scn" description="Mailbox sample">
+        <data test="page = 1" file="mailbox/mailbox-multiple-first.scn" description="First page"/>
+        <data test="page = 2" file="mailbox/mailbox-multiple-last.scn" description="Last page"/>
+        <data test="scenery = full" file="mailbox/mailbox-full.scn" description="Malbox full"/>
+    </scenery-set>
+    <scenery-set uri="sample1.do" template="sample1.jsp" data="sample1.scn" description="Simple merge"/>
+    <scenery-set uri="sameTemplate.do" template="default.jsp" data="default.scn">
+        <data test="param = 1" file="case1.scn" description="Case-1 data"/>
+        <data test="param = 2" file="case2.scn" description="Case-2 data"/>
+    </scenery-set>
+    <scenery-set uri="sameData.do" template="default.jsp" data="default.scn">
+        <template test="param = 1" file="case1.jsp" description="Using template 1"/>
+        <template test="param = 2" file="case2.jsp" description="Using template 2"/>
+    </scenery-set>
+    <scenery-set uri="mixed.do" template="default.jsp" data="default.scn" description="Mixed default">
+        <template test="param = 1" file="case1.jsp" description="Alternative template"/>
+        <template test="param = 2" file="case2.jsp" description="Another template"/>
+        <data test="param = 3" file="case1.scn" description="Alternative data"/>
+        <data test="param = 4" file="case2.scn"/>
+    </scenery-set>
+    <scenery-set uri="eachCase.do" template="default.jsp" data="default.scn">
+        <template test="param = 1" file="case1.jsp" description="Alternative template"/>
+        <template test="param = 2" file="case2.jsp" description="Another template"/>
+        <data test="param = 1" file="case1.scn" description="Alternative data"/>
+        <data test="param = 2" file="case2.scn"/>
+    </scenery-set>
+    <scenery-set uri="noAdapt.do" template="noAdapt.jsp" data="sample1.scn" adapt="false"/>
+    <scenery-set uri="multipleData.do" template="sample1.jsp" data="multipleData1.scn, multipleData2.scn"/>
+    <scenery-set uri="strutsSample.do" template="success" data="sample1.scn" description="Simple merge">
+        <data test="error=1" file="strutsFailure.scn"/>
+        <template test="error=1" file="failure" description="Alternative struts template/data w/ failure"/>
+        <template test="jsp=1" file="strutsSuccess.jsp" description="Direct access to jsp"/>
+        <template test="velocity=alias" file="velocity" description="Velocity (alias defined on struts-config.xml)"/>
+        <template test="velocity=file" file="/strutsSuccess.vm" description="Velocity (direct file access)"/>
+    </scenery-set>
+</scenery-manager>
