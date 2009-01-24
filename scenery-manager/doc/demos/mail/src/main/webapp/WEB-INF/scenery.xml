@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        
+<scenery-manager>
+    <scenery-set uri="mailbox.do" template="mailbox/mailbox.jsp" data="mailbox/common.scn, mailbox/mailbox.scn"
+                 description="Mailbox sample">
+        <data test="page = 1" file="mailbox/common.scn, mailbox/mailbox-multiple-first.scn" description="First page"/>
+        <data test="page = 2" file="mailbox/common.scn, mailbox/mailbox-multiple-last.scn" description="Last page"/>
+        <data test="scenery = full" file="mailbox/common.scn, mailbox/mailbox-full.scn" description="Malbox full"/>
+    </scenery-set>
+
+    <scenery-set uri="velocity.do" template="velocity.vm" data="velocity.scn"
+                 description="Using velocity">
+        <data test="error=true" file="error.scn" description="How an scn error is shown" />
+    </scenery-set>
+</scenery-manager>

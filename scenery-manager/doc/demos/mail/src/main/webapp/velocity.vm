@@ -1,0 +1,28 @@
+<pre>
+intValue = $intValue;
+doubleValue = $doubleValue;
+booleanValue = $booleanValue;
+dateValue = $dateValue;
+stringValue = "$stringValue";
+
+otherAdapter = {
+    message = "$otherAdapter.get("message")";
+};
+
+arrayValue = array: {
+    #foreach ($value in $arrayValue)
+        $value
+    #end
+};
+
+mapValue = map: {
+    "x" = { message = "$mapValue.get("x").get("message")"; },
+    "b" = $mapValue.get("b"),
+    "a" = $mapValue.get("a")
+};
+
+#set ($i = $collectionValue.iterator())
+collectionValue = collection: {
+    $i.next(), $i.next(), { message = "$i.next().get("message")"; }
+};
+</pre>

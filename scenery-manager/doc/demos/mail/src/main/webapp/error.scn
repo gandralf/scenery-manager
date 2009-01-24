@@ -1,0 +1,5 @@
+schulambs = {
+    dateValue = 2003-02-20;
+    error = "forgot the ;"
+    booleanValue = true;
+};

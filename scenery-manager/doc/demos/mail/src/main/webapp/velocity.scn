@@ -1,0 +1,21 @@
+intValue = 123;
+doubleValue = 123.45;
+booleanValue = true;
+dateValue = 2002-07-20;
+stringValue = "Hello, world!";
+
+otherAdapter = {
+    message = "Hello again...";
+};
+
+arrayValue = array: { 123, 456 };
+
+mapValue = map: {
+    "x" = { message = "Hello again..."; },
+    "b" = 161,
+    "a" = 145
+};
+
+collectionValue = collection: {
+    789, 111, { message = "Hello again..."; }
+};

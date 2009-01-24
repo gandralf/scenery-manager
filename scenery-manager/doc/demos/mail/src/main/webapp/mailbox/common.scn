@@ -1,0 +1,5 @@
+userName="Alexandre, o Gandra";
+date = 2002-12-13 15:50;
+usedSpace = 250.0;
+totalSpace = 2000.0;
+mailboxFull = true;

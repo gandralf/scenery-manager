@@ -1,0 +1,6 @@
+emailList = collection: {
+    { subject = "Esse eu agarantio!";       from = "c_harada@tpi.com.br";   date = 2002-12-10 18:00; }
+};
+
+previousPage = "mailbox.do?page=1";
+
