@@ -43,12 +43,6 @@
             <version>4.4</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>cactus</groupId>
-            <artifactId>cactus</artifactId>
-            <version>13-1.7.2</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
