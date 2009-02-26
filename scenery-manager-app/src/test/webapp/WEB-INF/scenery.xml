@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DOCTYPE scenery-manager SYSTEM "./../../../doc/scenery.dtd" -->
+<scenery-manager>
+    <scenery-set uri="mailbox.do" template="mailbox/mailbox.vm" data="mailbox/mailbox.scn">
+        <data description="Just an error" test="error=true" file="mailbox/mailbox-error.scn" />
+    </scenery-set>
+</scenery-manager>

@@ -1,0 +1,33 @@
+Thu Feb 26 15:01:13 CLST 2009  [debug] AvalonLogSystem initialized using logfile 'velocity.log'
+Thu Feb 26 15:01:13 CLST 2009   [info] ************************************************************** 
+Thu Feb 26 15:01:13 CLST 2009   [info] Starting Jakarta Velocity v1.4
+Thu Feb 26 15:01:13 CLST 2009   [info] RuntimeInstance initializing.
+Thu Feb 26 15:01:13 CLST 2009   [info] Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+Thu Feb 26 15:01:13 CLST 2009   [info] Trying to use logger class org.apache.velocity.runtime.log.AvalonLogSystem
+Thu Feb 26 15:01:13 CLST 2009   [info] Using logger class org.apache.velocity.runtime.log.AvalonLogSystem
+Thu Feb 26 15:01:13 CLST 2009   [info] Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+Thu Feb 26 15:01:13 CLST 2009   [info] Resource Loader Instantiated: org.apache.velocity.runtime.resource.loader.FileResourceLoader
+Thu Feb 26 15:01:13 CLST 2009   [info] FileResourceLoader : initialization starting.
+Thu Feb 26 15:01:13 CLST 2009   [info] FileResourceLoader : adding path 'null'
+Thu Feb 26 15:01:13 CLST 2009   [info] FileResourceLoader : adding path '.'
+Thu Feb 26 15:01:13 CLST 2009   [info] FileResourceLoader : initialization complete.
+Thu Feb 26 15:01:13 CLST 2009   [info] ResourceCache : initialized. (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+Thu Feb 26 15:01:13 CLST 2009   [info] Default ResourceManager initialization complete.
+Thu Feb 26 15:01:13 CLST 2009   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+Thu Feb 26 15:01:13 CLST 2009   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+Thu Feb 26 15:01:13 CLST 2009   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+Thu Feb 26 15:01:13 CLST 2009   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Include
+Thu Feb 26 15:01:13 CLST 2009   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+Thu Feb 26 15:01:13 CLST 2009   [info] Created: 20 parsers.
+Thu Feb 26 15:01:13 CLST 2009   [info] Velocimacro : initialization starting.
+Thu Feb 26 15:01:13 CLST 2009   [info] Velocimacro : adding VMs from VM library template : VM_global_library.vm
+Thu Feb 26 15:01:13 CLST 2009   [info] ResourceManager : found VM_global_library.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+Thu Feb 26 15:01:13 CLST 2009   [info] Velocimacro :  VM library template macro registration complete.
+Thu Feb 26 15:01:13 CLST 2009   [info] Velocimacro : allowInline = true : VMs can be defined inline in templates
+Thu Feb 26 15:01:13 CLST 2009   [info] Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+Thu Feb 26 15:01:13 CLST 2009   [info] Velocimacro : allowInlineLocal = false : VMs defined inline will be  global in scope if allowed.
+Thu Feb 26 15:01:13 CLST 2009   [info] Velocimacro : messages on  : VM system will output logging messages
+Thu Feb 26 15:01:13 CLST 2009   [info] Velocimacro : autoload off  : VM system will not automatically reload global library macros
+Thu Feb 26 15:01:13 CLST 2009   [info] Velocimacro : initialization complete.
+Thu Feb 26 15:01:13 CLST 2009   [info] Velocity successfully started.
+Thu Feb 26 15:01:18 CLST 2009   [info] ResourceManager : found config.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader

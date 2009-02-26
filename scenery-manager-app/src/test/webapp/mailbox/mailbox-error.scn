@@ -1,0 +1,5 @@
+name = "blah";
+stuff = collection: {
+     "I'll forget a comma here"
+     "Nice. The last one doesn't need that"
+};
