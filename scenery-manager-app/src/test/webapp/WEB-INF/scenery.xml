@@ -3,5 +3,6 @@
 <scenery-manager>
     <scenery-set uri="mailbox.do" template="mailbox/mailbox.vm" data="mailbox/mailbox.scn">
         <data description="Just an error" test="error=true" file="mailbox/mailbox-error.scn" />
+        <template description="Freemarker" test="template=ftl" file="mailbox/mailbox.ftl" />
     </scenery-set>
 </scenery-manager>

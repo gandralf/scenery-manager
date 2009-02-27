@@ -18,10 +18,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
+
+import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 public class SceneryFilter implements Filter {
     private static final Logger s_log = Logger.getLogger(SceneryFilter.class);
@@ -60,7 +62,7 @@ public class SceneryFilter implements Filter {
             } catch (IllegalArgumentException e) {
                 // todo damn ugly
                 if (!e.getMessage().contains("Scenery not found")) {
-                    throw e;
+                     throw e;
                 }
                 redirect(targetApp, request, response);
             } catch (SceneryFileException e) { // Scn file error
@@ -114,6 +116,45 @@ public class SceneryFilter implements Filter {
      */
     public void handleTemplate(String targetPath, String template, String encoding, HttpServletResponse response,
                        TemplateAdapter templateAdapter, boolean adapt) throws IOException, ServletException {
+        if (template.endsWith(".vm")) {
+            handleVelocityTemplate(targetPath, template, encoding, response, templateAdapter, adapt);
+        } else {
+            handleFreemarkerTemplate(targetPath, template, encoding, response, templateAdapter, adapt);
+        }
+    }
+
+    private void handleFreemarkerTemplate(String targetPath, String template, String encoding, HttpServletResponse response, TemplateAdapter templateAdapter, boolean adapt) throws IOException, ServletException {
+        // Create and adjust the configuration
+        Configuration cfg = new Configuration();
+        cfg.setEncoding(Locale.getDefault(), encoding);
+        cfg.setDirectoryForTemplateLoading(new File(targetPath));
+        cfg.setObjectWrapper(new DefaultObjectWrapper());
+
+        // You usually do these for many times in the application life-cycle:
+
+        // Get or create a template
+        Template temp = cfg.getTemplate(template);
+
+        // Create a data-model
+        Map<String, Object> root = new HashMap<String, Object>();
+        for (Object property : templateAdapter.getProperties()) {
+            String name = (String) property;
+            root.put(name, adapt ? templateAdapter.adapt(name) : templateAdapter.get(name));
+        }
+        root.put("templateAdapter", templateAdapter);
+
+        // Merge data-model with template
+        Writer out = response.getWriter();
+        try {
+            temp.process(root, out);
+        } catch (TemplateException e) {
+            throw new ServletException(e);
+        }
+        out.flush();
+
+    }
+
+    private void handleVelocityTemplate(String targetPath, String template, String encoding, HttpServletResponse response, TemplateAdapter templateAdapter, boolean adapt) throws ServletException {
         Context ctx = new VelocityContext();
         for (Object property : templateAdapter.getProperties()) {
             String name = (String) property;

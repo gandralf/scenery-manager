@@ -28,6 +28,15 @@ public class SceneryFilterTest extends HttpUnitTestCase {
     }
 
     /**
+     * Freemarker?
+     */
+    public void testFreemarker() throws IOException, SAXException {
+        WebRequest request   = new GetMethodWebRequest( "http://blog.gonow.intranet/mailbox.do?template=ftl" );
+        WebResponse response = m_client.getResponse( request );
+        assertEquals("Hello, Zeh maneh", response.getText().trim());
+    }
+
+    /**
      * senao, aciona o outro site
      */
     public void testRedirect() throws IOException, SAXException {
