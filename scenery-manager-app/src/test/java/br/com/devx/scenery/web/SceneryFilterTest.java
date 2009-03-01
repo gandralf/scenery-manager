@@ -38,6 +38,12 @@ public class SceneryFilterTest extends HttpUnitTestCase {
         assertEquals("Hello, Zeh maneh", response.getText().trim());
     }
 
+    public void testFreemarkerInclude() throws IOException, SAXException {
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/freemarker.do?test=include" );
+        WebResponse response = m_client.getResponse( request );
+        assertEquals("Hello, Zeh maneh", response.getText().trim());
+    }
+
     /**
      * senao, aciona o outro site
      */

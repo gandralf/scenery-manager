@@ -12,7 +12,7 @@
 
     <!-- freemarker -->
     <scenery-set uri="freemarker.do" template="freemarker/hello.ftl" data="velocity/hello.scn">
-        
+        <template test="test=include" file="freemarker/parse.ftl" />
     </scenery-set>
 
     <!-- other stuff -->
