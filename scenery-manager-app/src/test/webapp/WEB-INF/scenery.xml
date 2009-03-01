@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- DOCTYPE scenery-manager SYSTEM "./../../../doc/scenery.dtd" -->
 <scenery-manager>
-    <scenery-set uri="mailbox.do" template="mailbox/mailbox.vm" data="mailbox/mailbox.scn">
-        <data description="Just an error" test="error=true" file="mailbox/mailbox-error.scn" />
-        <template description="Freemarker" test="template=ftl" file="mailbox/mailbox.ftl" />
+    <scenery-set uri="velocity.do" template="velocity/hello.vm" data="velocity/hello.scn">
+        <data description="Just an error" test="error=true" file="velocity/hello-error.scn" />
+    </scenery-set>
+
+    <!-- advanced velocity -->
+    <scenery-set uri="velocityx.do" template="velocity/macro.vm" data="velocity/macro.scn" >
+        <template description="parse" test="test=parse" file="velocity/parse.vm" />
+    </scenery-set>
+
+    <!-- freemarker -->
+    <scenery-set uri="freemarker.do" template="freemarker/hello.ftl" data="velocity/hello.scn">
+        
+    </scenery-set>
+
+    <!-- other stuff -->
+    <scenery-set uri="classloader.do" template="classloader/classloader.vm" data="classloader/classloader.scn">
+        <data test="from=lib" description="from WEB-INF/lib" file="classloader/classloader-lib.scn" />
     </scenery-set>
 </scenery-manager>

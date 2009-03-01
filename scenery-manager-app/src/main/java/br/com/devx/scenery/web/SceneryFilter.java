@@ -2,10 +2,15 @@ package br.com.devx.scenery.web;
 
 import br.com.devx.scenery.SceneryFileException;
 import br.com.devx.scenery.TemplateAdapter;
+import br.com.devx.scenery.CollectionsHelper;
+import br.com.devx.scenery.parser.SceneryParserHelper;
 import br.com.devx.scenery.manager.SceneryManagerException;
 import br.com.devx.scenery.manager.SceneryManagerResult;
+import br.com.devx.scenery.manager.SceneryManager;
+import br.com.devx.scenery.manager.Scenery;
 import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.MethodInvocationException;
@@ -31,9 +36,15 @@ public class SceneryFilter implements Filter {
     public void init(FilterConfig config) throws ServletException {
         // Standard template management
         Properties properties = new Properties();
-        properties.put("resource.loader", "file");
+        properties.put("resource.loader", "file, targetApp");
         String webPath = config.getServletContext().getRealPath("/");
         properties.put("file.resource.loader.path", webPath + ", .");
+        properties.put("targetApp.resource.loader.class", TargetResourceLoader.class.getName());
+
+        properties.setProperty( RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS,
+          "org.apache.velocity.runtime.log.Log4JLogChute" );
+        properties.setProperty("runtime.log.logsystem.log4j.logger", "org.apache.velocity");
+
 
         try {
             Velocity.init(properties);
@@ -54,8 +65,10 @@ public class SceneryFilter implements Filter {
         } else {
             TargetApp targetApp = AppsConfig.getInstance().getTargetApp();
             try {
-                SceneryManagerResult smr = ServletHelper.querySceneryManager(request, targetApp.getPath() + "/WEB-INF/scenery.xml",
-                        targetApp.getPath());
+                SceneryManagerResult smr = querySceneryManager(request,
+                        targetApp.getPath() + "/WEB-INF/scenery.xml",
+                        targetApp.getPath(),
+                        targetApp.getClassLoader());
                 String template = smr.getScenery().getTemplate();
                 handleTemplate(targetApp.getPath(), template, smr.getEncoding(), response, smr.getTemplateAdapter(),
                         smr.isAdapt());
@@ -71,6 +84,29 @@ public class SceneryFilter implements Filter {
                 throw new ServletException(e);
             }
         }
+    }
+
+    public static SceneryManagerResult querySceneryManager(HttpServletRequest request, String sceneryXml,
+                                                           String dataRoot, ClassLoader classLoader)
+            throws SceneryManagerException {
+        SceneryParserHelper.setClassLoader(classLoader);
+
+        List sceneryDataList = CollectionsHelper.makeList(request.getParameterValues("sceneryData"));
+        String sceneryTemplate = request.getParameter("sceneryTemplate");
+        String adaptParam = request.getParameter("adapt");
+        boolean adaptAux = !("false".equals(adaptParam) || "no".equals(adaptParam) || "0".equals(adaptParam));
+        Boolean adapt = adaptParam != null ? adaptAux : null;
+        String baseURI = request.getRequestURI().substring(request.getContextPath().length());
+
+        SceneryManager sceneryManager = new SceneryManager(sceneryXml, dataRoot);
+        SceneryManagerResult sceneryManagerResult = sceneryManager.query(baseURI, request.getParameterMap(), sceneryDataList, sceneryTemplate, adapt);
+        if (s_log.isInfoEnabled()) {
+            Scenery scenery = sceneryManagerResult.getScenery();
+            s_log.info("scenery found: " + scenery.getTemplate() + "/" + scenery.getDataList() +
+                    ", test=" + scenery.getTest());
+        }
+
+        return sceneryManagerResult;
     }
 
     private void redirect(TargetApp app, HttpServletRequest request, HttpServletResponse response)

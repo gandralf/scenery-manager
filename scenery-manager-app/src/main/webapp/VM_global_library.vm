@@ -1,0 +1,3 @@
+#macro(macrolib $msg)
+Hello, $msg!
+#end

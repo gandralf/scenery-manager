@@ -14,24 +14,26 @@ public class SceneryFilterTest extends HttpUnitTestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        m_app = AppsConfig.getInstance().getTargetApp();
+        AppsConfig config = AppsConfig.getInstance();
+        config.reset();
+        m_app = config.getTargetApp();
         m_app.setPath("../../test/webapp");
     }
 
     /**
      * Se o cenario estah mapeado, usa-o
      */
-    public void testScenery() throws IOException, SAXException {
-        WebRequest request   = new GetMethodWebRequest( "http://blog.gonow.intranet/mailbox.do" );
+    public void testVelocity() throws IOException, SAXException {
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/velocity.do" );
         WebResponse response = m_client.getResponse( request );
         assertEquals("Hello, Zeh maneh", response.getText().trim());
     }
 
     /**
-     * Freemarker?
+     * Freemarker
      */
     public void testFreemarker() throws IOException, SAXException {
-        WebRequest request   = new GetMethodWebRequest( "http://blog.gonow.intranet/mailbox.do?template=ftl" );
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/freemarker.do" );
         WebResponse response = m_client.getResponse( request );
         assertEquals("Hello, Zeh maneh", response.getText().trim());
     }
@@ -42,7 +44,7 @@ public class SceneryFilterTest extends HttpUnitTestCase {
     public void testRedirect() throws IOException, SAXException {
         m_app.setUrl("http://blog.gonow.intranet/");
 
-        WebRequest request   = new GetMethodWebRequest( "http://blog.gonow.intranet/blah.do" );
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/blah.do" );
         WebResponse response = m_client.getResponse( request );
         assertTrue(response.getText().toLowerCase().contains("blog da gonow"));
     }
@@ -51,9 +53,37 @@ public class SceneryFilterTest extends HttpUnitTestCase {
      * senao, aciona o outro site
      */
     public void testError() throws IOException, SAXException {
-        WebRequest request   = new GetMethodWebRequest( "http://blog.gonow.intranet/mailbox.do?error=true" );
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/velocity.do?error=true" );
         WebResponse response = m_client.getResponse( request );
         String text = response.getText();
         assertTrue(text.contains("<pre>     \"I'll forget a comma here\"</pre>"));
+    }
+
+    public void testVelocityMacro() throws IOException, SAXException {
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/velocityx.do" );
+        WebResponse response = m_client.getResponse( request );
+        String text = response.getText();
+        assertTrue(text.contains("<td bgcolor=\"blue\">hello</td>"));
+    }
+
+    public void testVelocityParse() throws IOException, SAXException {
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/velocityx.do?test=parse" );
+        WebResponse response = m_client.getResponse( request );
+        String text = response.getText();
+        assertTrue(text.contains("<td bgcolor=\"blue\">hello</td>"));
+    }
+
+    public void testWebInfClasses() throws IOException, SAXException {
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/classloader.do" );
+        WebResponse response = m_client.getResponse( request );
+        String text = response.getText();
+        assertTrue(text.contains("Hello, Me!, your id is 1"));
+    }
+
+    public void testWebInfLib() throws IOException, SAXException {
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/classloader.do?from=lib" );
+        WebResponse response = m_client.getResponse( request );
+        String text = response.getText();
+        assertTrue(text.contains("Hello, Me!, your id is 1"));
     }
 }

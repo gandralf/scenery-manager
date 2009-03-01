@@ -1,0 +1,4 @@
+obj = new br.com.devx.scenery.test.SimpleClass(1, "Me") {
+
+};
+

@@ -1,0 +1,4 @@
+obj = new com.wtf.WtfClass(1, "Me") {
+
+};
+

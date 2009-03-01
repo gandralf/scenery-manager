@@ -1,0 +1,4 @@
+adv = {
+    color = "blue";
+    list = collection: { "hello", "world" };
+};

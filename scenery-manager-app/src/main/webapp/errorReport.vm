@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title><%= message %></title>
+    <title>$message</title>
 <body>
 <h2>Scenery data file error</h2>
 $message
