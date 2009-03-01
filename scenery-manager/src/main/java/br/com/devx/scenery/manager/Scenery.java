@@ -2,6 +2,7 @@ package br.com.devx.scenery.manager;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /*
  * User: agandra
@@ -10,7 +11,7 @@ import java.util.ArrayList;
  */
 public class Scenery {
     private String m_test;
-    private List m_dataList;
+    private List<String> m_dataList;
     private String m_template;
     private String m_description;
 
@@ -31,23 +32,19 @@ public class Scenery {
         m_test = test;
     }
 
-    public Scenery(List dataList, String template, String description, String test) {
+    public Scenery(List<String> dataList, String template, String description, String test) {
         m_dataList = dataList;
         m_template = template;
         m_description = description;
         m_test = test;
     }
 
-    private List makeDataList(String data) {
+    private List<String> makeDataList(String data) {
         if (data != null) {
             String[] dataFiles = data.split("\\s*,\\s*");
-            List result = new ArrayList(dataFiles.length);
-            for (int i = 0; i < dataFiles.length; i++) {
-                result.add(dataFiles[i]);
-            }
-            return result;
+            return new ArrayList<String>(Arrays.asList(dataFiles));
         } else {
-            return new ArrayList();
+            return new ArrayList<String>();
         }
     }
 
@@ -55,11 +52,11 @@ public class Scenery {
         return m_test;
     }
 
-    public List getDataList() {
+    public List<String> getDataList() {
         return m_dataList;
     }
 
-    public void setDataList(List dataList) {
+    public void setDataList(List<String> dataList) {
         m_dataList = dataList;
     }
 
@@ -85,12 +82,11 @@ public class Scenery {
 
         final Scenery scenery = (Scenery) o;
 
-        if (!m_dataList.equals(scenery.m_dataList)) return false;
-        if (m_description != null ? !m_description.equals(scenery.m_description) : scenery.m_description != null) return false;
-        if (m_template != null ? !m_template.equals(scenery.m_template) : scenery.m_template != null) return false;
-        if (m_test != null ? !m_test.equals(scenery.m_test) : scenery.m_test != null) return false;
+        return m_dataList.equals(scenery.m_dataList)
+                && !(m_description != null ? !m_description.equals(scenery.m_description) : scenery.m_description != null)
+                && !(m_template != null ? !m_template.equals(scenery.m_template) : scenery.m_template != null)
+                && !(m_test != null ? !m_test.equals(scenery.m_test) : scenery.m_test != null);
 
-        return true;
     }
 
     public int hashCode() {
