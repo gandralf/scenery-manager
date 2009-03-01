@@ -32,7 +32,7 @@ public class ObjectWrapper {
     public boolean containsMethod(String methodName) {
         Class sourceClass = m_source.getClass();
         try {
-            sourceClass.getMethod(methodName, null);
+            sourceClass.getMethod(methodName);
             return true;
         } catch(NoSuchMethodException e) {
             return false;
@@ -53,19 +53,17 @@ public class ObjectWrapper {
 
     public Object call(String methodName, Object[] parameters) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Method method = findMethod(methodName, parameters);
-        Object result = method.invoke(m_source, parameters);
 
-        return result;
+        return method.invoke(m_source, parameters);
     }
 
     private Method findMethod(String methodName, Object[] parameters) throws NoSuchMethodException {
         if (parameters == null || parameters.length == 0) {
-            return m_source.getClass().getMethod(methodName, null);
+            return m_source.getClass().getMethod(methodName);
         }
 
         Method[] methods = m_source.getClass().getMethods();
-        for (int i = 0; i < methods.length; i++) {
-            Method method = methods[i];
+        for (Method method : methods) {
             if (method.getName().equals(methodName)) {
                 if (ReflectionHelper.canCall(method, parameters)) {
                     return method;
@@ -76,11 +74,10 @@ public class ObjectWrapper {
         throw new NoSuchMethodException("No such method (" + methodName + ") with given parameters");
     }
 
-    public Collection getProperties() {
-        ArrayList result = new ArrayList();
+    public Collection<String> getProperties() {
+        ArrayList<String> result = new ArrayList<String>();
         Method[] methods = m_source.getClass().getMethods();
-        for (int i = 0; i < methods.length; i++) {
-            Method method = methods[i];
+        for (Method method : methods) {
             String name = method.getName();
             if (name.matches("^get[A-Z](.)*") &&
                     method.getModifiers() == Modifier.PUBLIC && method.getParameterTypes().length == 0) {

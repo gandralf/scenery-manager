@@ -52,7 +52,7 @@ public class ServletHelper {
     }
 
     public static TemplateHandler[] getTemplateHandlers(ServletConfig config) throws ServletException {
-        Collection templateHandlers = new ArrayList();
+        Collection<TemplateHandler> templateHandlers = new ArrayList<TemplateHandler>();
         String initParameter = config.getInitParameter("templateHandlers");
         if (initParameter == null) {
             initParameter = "br.com.devx.scenery.web.JspTemplateHandler"; // Default template handler
@@ -60,8 +60,7 @@ public class ServletHelper {
 
         String[] templateHandlerClasses = initParameter.split(",\\s*");
         try {
-            for (int i = 0; i < templateHandlerClasses.length; i++) {
-                String templateHandlerClass = templateHandlerClasses[i];
+            for (String templateHandlerClass : templateHandlerClasses) {
                 TemplateHandler templateHandler = (TemplateHandler) Class.forName(templateHandlerClass).newInstance();
                 templateHandler.init(config);
                 templateHandlers.add(templateHandler);
@@ -77,16 +76,15 @@ public class ServletHelper {
         nullTemplateHandler.init(config);
         templateHandlers.add(nullTemplateHandler);
 
-        TemplateHandler[] result = (TemplateHandler[]) templateHandlers.toArray(new TemplateHandler[]{});
-        return result;
+        return templateHandlers.toArray(new TemplateHandler[]{});
     }
 
     public static SceneryManagerResult querySceneryManager(HttpServletRequest request, String sceneryXml, String dataRoot) throws SceneryManagerException {
-        List sceneryDataList = CollectionsHelper.makeList(request.getParameterValues("sceneryData"));
+        List<String> sceneryDataList = CollectionsHelper.makeList(request.getParameterValues("sceneryData"));
         String sceneryTemplate = request.getParameter("sceneryTemplate");
         String adaptParam = request.getParameter("adapt");
         boolean adaptAux = !("false".equals(adaptParam) || "no".equals(adaptParam) || "0".equals(adaptParam));
-        Boolean adapt = adaptParam != null ? new Boolean(adaptAux) : null;
+        Boolean adapt = adaptParam != null ? adaptAux : null;
         String baseURI = request.getRequestURI().substring(request.getContextPath().length());
 
         SceneryManager sceneryManager = new SceneryManager(sceneryXml, dataRoot);
@@ -107,15 +105,15 @@ public class ServletHelper {
         try {
             BufferedReader reader = new BufferedReader(fileReader);
             String line;
-            ArrayList lines = new ArrayList();
-            while((line = reader.readLine()) != null) {
+            ArrayList<String> lines = new ArrayList<String>();
+            while ((line = reader.readLine()) != null) {
                 lines.add(line);
             }
 
             request.setAttribute("message", e.getMessage());
-            request.setAttribute("errorLine", new Integer(e.getLine()));
-            request.setAttribute("errorBeginColumn", new Integer(e.getBeginColumn()));
-            request.setAttribute("errorEndColumn", new Integer(e.getEndColumn()));
+            request.setAttribute("errorLine", e.getLine());
+            request.setAttribute("errorBeginColumn", e.getBeginColumn());
+            request.setAttribute("errorEndColumn", e.getEndColumn());
             request.setAttribute("lines", lines);
 
             context.getRequestDispatcher("/errorReport.jsp").include(request, response);

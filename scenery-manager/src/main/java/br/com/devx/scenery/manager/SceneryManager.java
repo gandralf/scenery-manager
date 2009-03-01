@@ -8,7 +8,6 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +20,7 @@ public class SceneryManager {
         m_dataRoot = dataRoot;
     }
 
-    public SceneryManagerResult query(String baseURI, Map parameterMap, List dataList, String template, Boolean adapt) throws SceneryManagerException {
+    public SceneryManagerResult query(String baseURI, Map parameterMap, List<String> dataList, String template, Boolean adapt) throws SceneryManagerException {
         Scenery scenery = m_sceneryFinder.getScenery(baseURI, parameterMap);
         if (scenery == null) {
             scenery = new Scenery(dataList, template, null, null);
@@ -41,13 +40,13 @@ public class SceneryManager {
 
         ScenerySet scenerySet = m_sceneryFinder.getSceneries(baseURI);
         if (adapt == null && scenerySet != null) {
-            adapt = Boolean.valueOf(scenerySet.getAdapt());
+            adapt = scenerySet.getAdapt();
         } else if (adapt == null) {
             adapt = Boolean.FALSE; // default
         }
 
         return new SceneryManagerResult(scenery, templateAdapter, scenerySet,
-                adapt.booleanValue(), m_sceneryFinder.getEncoding());
+                adapt, m_sceneryFinder.getEncoding());
     }
 
     public TemplateAdapter buildTemplateAdapter(String baseURI, Map parameterMap) throws SceneryManagerException {
@@ -56,21 +55,18 @@ public class SceneryManager {
             throw new IllegalArgumentException("Scenery not found for " + baseURI + " and parameters " + parameterMap);
         }
 
-        List dataList = foundScenery.getDataList();
+        List<String> dataList = foundScenery.getDataList();
 
         return buildTemplateAdapter(dataList);
     }
 
-    private TemplateAdapter buildTemplateAdapter(List dataList) throws SceneryManagerException {
+    private TemplateAdapter buildTemplateAdapter(List<String> dataList) throws SceneryManagerException {
         TemplateAdapter templateAdapter = new TemplateAdapter();
         if (dataList != null) {
             dataList = appendOnList(m_dataRoot + "/", dataList);
 
-            String data = null;
-            try {
-                Iterator iterator = dataList.iterator();
-                while (iterator.hasNext()) {
-                    data = (String) iterator.next();
+            for (String data : dataList) {
+                try {
                     Reader reader;
                     if (m_sceneryFinder.getEncoding() == null) {
                         reader = new FileReader(data);
@@ -84,11 +80,11 @@ public class SceneryManager {
                     } finally {
                         reader.close();
                     }
+                } catch (ParseException e) {
+                    throw new SceneryFileException(data, e);
+                } catch (IOException e) {
+                    throw new SceneryManagerException(e);
                 }
-            } catch (ParseException e) {
-                throw new SceneryFileException(data, e);
-            } catch (IOException e) {
-                throw new SceneryManagerException(e);
             }
         }
 
@@ -112,10 +108,9 @@ public class SceneryManager {
         return result;
     }
 
-    private List appendOnList(String prefix, List sufixes) {
-        List result = new ArrayList(sufixes.size());
-        for (Iterator iterator = sufixes.iterator(); iterator.hasNext();) {
-            String sufix = (String) iterator.next();
+    private List<String> appendOnList(String prefix, List<String> sufixes) {
+        List<String> result = new ArrayList<String>(sufixes.size());
+        for (String sufix : sufixes) {
             result.add(prefix + sufix);
         }
         return result;

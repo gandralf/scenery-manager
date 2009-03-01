@@ -6,7 +6,7 @@
 
     <groupId>scenery</groupId>
     <artifactId>scenery</artifactId>
-    <version>1.1.2</version>
+    <version>1.2-SNAPSHOT</version>
     <name>Scenery Manager</name>
     <description>
         A pretty simple velocity/jsp template development engine
@@ -26,9 +26,9 @@
         </dependency>
 
         <dependency>
-            <groupId>velocity</groupId>
+            <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
-            <version>1.4</version>
+            <version>1.6.1</version>
         </dependency>
 
         <dependency>
@@ -47,6 +47,14 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>javacc-maven-plugin</artifactId>

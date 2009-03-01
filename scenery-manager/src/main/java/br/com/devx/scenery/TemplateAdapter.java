@@ -1,16 +1,12 @@
 package br.com.devx.scenery;
 
-import br.com.devx.scenery.parser.SceneryParser;
 import br.com.devx.scenery.parser.ParseException;
+import br.com.devx.scenery.parser.SceneryParser;
 
-import java.util.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Array;
 import java.io.Reader;
-
-import br.com.devx.scenery.TemplateFormatStrategy;
-import br.com.devx.scenery.ObjectWrapper;
-import br.com.devx.scenery.TemplateAdapterPrinter;
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 /**
  * Scenery manager main class. It holds all template data, which goes to the template itself.
@@ -45,7 +41,7 @@ import br.com.devx.scenery.TemplateAdapterPrinter;
  * @see TemplateFormatStrategy
  * @see SceneryParser
  */
-public class TemplateAdapter extends HashMap {
+public class TemplateAdapter extends HashMap<String, Object> {
     private TemplateFormatStrategy m_formatStrategy;
     private ObjectWrapper m_wrappedObject;
 
@@ -66,9 +62,7 @@ public class TemplateAdapter extends HashMap {
     }
 
     public void setFormatStrategy(TemplateFormatStrategy formatStrategy) {
-        final Iterator i = super.values().iterator();
-        while (i.hasNext()) {
-            Object o = i.next();
+        for (Object o : super.values()) {
             if (o instanceof TemplateAdapter) {
                 ((TemplateAdapter) o).setFormatStrategy(formatStrategy);
             }
@@ -82,7 +76,7 @@ public class TemplateAdapter extends HashMap {
      * @param value Property value
      */
     public void put(String name, int value) {
-        super.put(name, new Integer(value));
+        super.put(name, value);
     }
 
     /**
@@ -91,7 +85,7 @@ public class TemplateAdapter extends HashMap {
      * @param value Property value
      */
     public void put(String name, double value) {
-        super.put(name, new Double(value));
+        super.put(name, value);
     }
 
     /**
@@ -100,7 +94,7 @@ public class TemplateAdapter extends HashMap {
      * @param value Property value
      */
     public void put(String name, boolean value) {
-        super.put(name, new Boolean(value));
+        super.put(name, value);
     }
 
     /**
@@ -110,8 +104,8 @@ public class TemplateAdapter extends HashMap {
      * @see #adapt
      * @see #get
      */
-    public void put(String name, Object value) {
-        super.put(name, value);
+    public Object put(String name, Object value) {
+        return super.put(name, value);
     }
 
     /**
@@ -195,9 +189,8 @@ public class TemplateAdapter extends HashMap {
      */
     public Object adapt(String name) {
         Object value = get(name);
-        Object result = adaptValue(name, value);
 
-        return result;
+        return adaptValue(name, value);
     }
 
     public TemplateAdapter getAdapter(String name) {
@@ -215,21 +208,17 @@ public class TemplateAdapter extends HashMap {
             if (value instanceof TemplateAdapter) {
                 result = value;
             } else if (value instanceof Map) {
-                HashMap mapResult = new HashMap((Map) value);
-                Iterator i = mapResult.keySet().iterator();
-                while (i.hasNext()) {
-                    String key = (String) i.next();
+                HashMap<String, Object> mapResult = new HashMap<String, Object>((Map<String, Object>) value);
+                for (String key : mapResult.keySet()) {
                     Object valueObject = mapResult.get(key);
                     mapResult.put(key, adaptValue(name, valueObject));
                 }
 
                 result = mapResult;
             } else if (value instanceof Collection) {
-                Collection collectionResult = new ArrayList();
+                Collection<Object> collectionResult = new ArrayList<Object>();
                 Collection valueCollection = (Collection) value;
-                Iterator i = valueCollection.iterator();
-                while (i.hasNext()) {
-                    Object o = i.next();
+                for (Object o : valueCollection) {
                     collectionResult.add(adaptValue(name, o));
                 }
 
@@ -309,11 +298,9 @@ public class TemplateAdapter extends HashMap {
      * Import all keys/values from <code>source</code> as properties
      * @param source
      */
-    private void importMap(Map source) {
-        Collection keys = source.keySet();
-        Iterator i = keys.iterator();
-        while(i.hasNext()) {
-            String key = (String) i.next();
+    private void importMap(Map<String, Object> source) {
+        Collection<String> keys = source.keySet();
+        for (String key : keys) {
             put(key, source.get(key));
         }
     }
@@ -346,6 +333,7 @@ public class TemplateAdapter extends HashMap {
      */
     public static TemplateAdapter load(Reader input) throws ParseException {
         SceneryParser SceneryParser = new SceneryParser(input);
+        
         return SceneryParser.parse();
     }
 
@@ -357,8 +345,8 @@ public class TemplateAdapter extends HashMap {
      * @see #adapt
      * @see #get
      */
-    public Collection getProperties() {
-        Collection result = new ArrayList();
+    public Collection<String> getProperties() {
+        Collection<String> result = new ArrayList<String>();
         result.addAll(super.keySet());
         if (m_wrappedObject != null) {
             result.addAll(m_wrappedObject.getProperties());
@@ -373,15 +361,13 @@ public class TemplateAdapter extends HashMap {
 
         final TemplateAdapter param = (TemplateAdapter) o;
 
-        Collection properties = getProperties();
+        Collection<String> properties = getProperties();
         Collection paramProperties = param.getProperties();
         if (properties.size() != paramProperties.size()) {
             return false;
         }
 
-        Iterator i = properties.iterator();
-        while (i.hasNext()) {
-            String key = (String) i.next();
+        for (String key : properties) {
             Object value = adapt(key);
             Object paramValue = param.adapt(key);
             if (!equals(value, paramValue)) {
@@ -423,10 +409,8 @@ public class TemplateAdapter extends HashMap {
 
     public void assignTo(Object target) {
         ObjectWrapper wrapper = new ObjectWrapper(target);
-        Collection properties = getProperties();
-        Iterator i = properties.iterator();
-        while (i.hasNext()) {
-            String propertyName = (String) i.next();
+        Collection<String> properties = getProperties();
+        for (String propertyName : properties) {
             if (wrapper.containsProperty(propertyName)) {
                 Object propertyValue = get(propertyName);
                 try {

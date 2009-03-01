@@ -11,14 +11,12 @@ import java.lang.reflect.Proxy;
 import java.util.HashMap;
 
 class CustomInterfaceHandler implements InvocationHandler {
-    private HashMap m_properties = new HashMap();
+    private HashMap<String, Object> m_properties = new HashMap<String, Object>();
 
     public static Object newInstance(Class customInterfaceClass) {
-        Object result = Proxy.newProxyInstance(customInterfaceClass.getClassLoader(),
+        return Proxy.newProxyInstance(customInterfaceClass.getClassLoader(),
                 new Class[] { customInterfaceClass },
                 new CustomInterfaceHandler());
-
-        return result;
     }
 
     public Object invoke(Object proxy, Method m, Object[] args) throws Throwable {

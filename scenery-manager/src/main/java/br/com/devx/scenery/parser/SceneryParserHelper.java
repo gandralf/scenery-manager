@@ -11,10 +11,16 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class SceneryParserHelper {
+    private static ClassLoader s_classLoader = Thread.currentThread().getContextClassLoader();
+
+    public static void setClassLoader(ClassLoader classLoader) {
+        s_classLoader = classLoader;
+    }
+
     public static int[] toIntArray(ArrayList arrayList) {
         int[] result = new int[arrayList.size()];
         for (int i=0; i < arrayList.size(); i++) {
-            result[i] = ((Integer) arrayList.get(i)).intValue();
+            result[i] = (Integer) arrayList.get(i);
         }
 
         return result;
@@ -23,7 +29,7 @@ public class SceneryParserHelper {
     public static double[] toDoubleArray(ArrayList arrayList) {
         double[] result = new double[arrayList.size()];
         for (int i=0; i < arrayList.size(); i++) {
-            result[i] = ((Double) arrayList.get(i)).doubleValue();
+            result[i] = (Double) arrayList.get(i);
         }
 
         return result;
@@ -32,7 +38,7 @@ public class SceneryParserHelper {
     public static boolean[] toBooleanArray(ArrayList arrayList) {
         boolean[] result = new boolean[arrayList.size()];
         for (int i=0; i < arrayList.size(); i++) {
-            result[i] = ((Boolean) arrayList.get(i)).booleanValue();
+            result[i] = (Boolean) arrayList.get(i);
         }
 
         return result;
@@ -80,15 +86,14 @@ public class SceneryParserHelper {
     public static Object newCustomType(String customClassName, Collection constructorParameters)
             throws ParseException {
         try {
-            Class customClass = Class.forName(customClassName);
+            Class customClass = Class.forName(customClassName, true, s_classLoader);
             if (customClass.isInterface()) {
                 return CustomInterfaceHandler.newInstance(customClass);
             } else if (constructorParameters == null || constructorParameters.size() == 0) {
                 return customClass.newInstance();
             } else {
                 Constructor constructor = findConstructor(customClass, constructorParameters.toArray());
-                Object result = constructor.newInstance(constructorParameters.toArray());
-                return result;
+                return constructor.newInstance(constructorParameters.toArray());
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -110,12 +115,11 @@ public class SceneryParserHelper {
 
     private static Constructor findConstructor(Class customClass, Object[] parameters) throws NoSuchMethodException {
         if (parameters == null || parameters.length == 0) {
-            return customClass.getConstructor(null);
+            return customClass.getConstructor();
         }
 
         Constructor[] constructors = customClass.getConstructors();
-        for (int i = 0; i < constructors.length; i++) {
-            Constructor constructor = constructors[i];
+        for (Constructor constructor : constructors) {
             if (ReflectionHelper.canCall(constructor, parameters)) {
                 return constructor;
             }
