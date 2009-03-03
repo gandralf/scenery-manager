@@ -92,4 +92,22 @@ public class SceneryFilterTest extends HttpUnitTestCase {
         String text = response.getText();
         assertTrue(text.contains("Hello, Me!, your id is 1"));
     }
+
+    public void testSitemesh() throws IOException, SAXException {
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/sitemesh.do" );
+        WebResponse response = m_client.getResponse( request );
+        String text = response.getText();
+        assertTrue(text.contains("Hello, Zeh maneh!"));
+        assertTrue("Didn't load main.flt decorator", text.contains("<title>Hello, sitemesh!</title>"));
+        assertTrue("Didn't load main.flt decorator", text.contains("Welcome to the world"));
+    }
+
+    public void testSitemeshPrint() throws IOException, SAXException {
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/sitemesh-print.do" );
+        WebResponse response = m_client.getResponse( request );
+        String text = response.getText();
+        assertTrue(text.contains("Hello, Zeh maneh!"));
+        assertTrue("Didn't load main.flt decorator", text.contains("<title>Hello, sitemesh!</title>"));
+        assertFalse("Didn't load main.flt decorator", text.contains("Welcome to the world"));
+    }
 }

@@ -1,5 +1,6 @@
 package br.com.devx.scenery.web;
 
+import br.com.devx.scenery.sitemesh.SimpleSitemesh;
 import br.com.devx.scenery.SceneryFileException;
 import br.com.devx.scenery.TemplateAdapter;
 import br.com.devx.scenery.CollectionsHelper;
@@ -70,8 +71,8 @@ public class SceneryFilter implements Filter {
                         targetApp.getPath(),
                         targetApp.getClassLoader());
                 String template = smr.getScenery().getTemplate();
-                handleTemplate(targetApp.getPath(), template, smr.getEncoding(), response, smr.getTemplateAdapter(),
-                        smr.isAdapt());
+                handleTemplate(targetApp.getPath(), template, smr.getEncoding(), request, response,
+                        smr.getTemplateAdapter(), smr.isAdapt());
             } catch (IllegalArgumentException e) {
                 // todo damn ugly
                 if (!e.getMessage().contains("Scenery not found")) {
@@ -79,7 +80,7 @@ public class SceneryFilter implements Filter {
                 }
                 redirect(targetApp, request, response);
             } catch (SceneryFileException e) { // Scn file error
-                handleTemplate(".", "errorReport.vm", "iso-8859-1", response, error(e), false);
+                handleTemplate(".", "errorReport.vm", "iso-8859-1", request, response, error(e), false);
             } catch (SceneryManagerException e) { // Wtf error
                 throw new ServletException(e);
             }
@@ -91,7 +92,7 @@ public class SceneryFilter implements Filter {
             throws SceneryManagerException {
         SceneryParserHelper.setClassLoader(classLoader);
 
-        List sceneryDataList = CollectionsHelper.makeList(request.getParameterValues("sceneryData"));
+        List<String> sceneryDataList = CollectionsHelper.makeList(request.getParameterValues("sceneryData"));
         String sceneryTemplate = request.getParameter("sceneryTemplate");
         String adaptParam = request.getParameter("adapt");
         boolean adaptAux = !("false".equals(adaptParam) || "no".equals(adaptParam) || "0".equals(adaptParam));
@@ -150,16 +151,42 @@ public class SceneryFilter implements Filter {
      * @param templateAdapter messy data to export
      * @param adapt transform each occurence into string
      */
-    public void handleTemplate(String targetPath, String template, String encoding, HttpServletResponse response,
+    public void handleTemplate(String targetPath, String template, String encoding,
+                               HttpServletRequest request, HttpServletResponse response,
                        TemplateAdapter templateAdapter, boolean adapt) throws IOException, ServletException {
-        if (template.endsWith(".vm")) {
-            handleVelocityTemplate(targetPath, template, encoding, response, templateAdapter, adapt);
-        } else {
-            handleFreemarkerTemplate(targetPath, template, encoding, response, templateAdapter, adapt);
+        try {
+            // todo rewriteble default
+            response.setContentType("text/html");
+            PrintWriter out = response.getWriter();
+            Sitemesh sitemesh = new SimpleSitemesh(targetPath, request.getRequestURI());
+            if (!sitemesh.isActive()) {
+                doHandleTemplate(targetPath, template, encoding, templateAdapter, adapt, out);
+            } else {
+                StringWriter sout = new StringWriter();
+                templateAdapter.put("base", new URL(new URL(request.getRequestURL().toString()), "/" + request.getContextPath()).toString());
+                // Write the decorator to a memory out
+                doHandleTemplate(targetPath, template, encoding, templateAdapter, adapt, new PrintWriter(sout));
+                // and decorate it
+                templateAdapter.put("head", "");
+                templateAdapter.put("body", sout.toString());
+                doHandleTemplate(targetPath, sitemesh.getTemplate(), encoding, templateAdapter, adapt, out);
+            }
+        } catch (SitemeshException e) {
+            new ServletException(e);
         }
     }
 
-    private void handleFreemarkerTemplate(String targetPath, String template, String encoding, HttpServletResponse response, TemplateAdapter templateAdapter, boolean adapt) throws IOException, ServletException {
+    private void doHandleTemplate(String targetPath, String template, String encoding, TemplateAdapter templateAdapter, boolean adapt, PrintWriter out) throws ServletException, IOException {
+        if (template.endsWith(".vm")) {
+            handleVelocityTemplate(targetPath, template, encoding, out, templateAdapter, adapt);
+        } else {
+            handleFreemarkerTemplate(targetPath, template, encoding, out, templateAdapter, adapt);
+        }
+    }
+
+    private void handleFreemarkerTemplate(String targetPath, String template, String encoding,
+                                          PrintWriter out, TemplateAdapter templateAdapter, boolean adapt)
+            throws IOException, ServletException {
         // Create and adjust the configuration
         Configuration cfg = new Configuration();
         cfg.setEncoding(Locale.getDefault(), encoding);
@@ -180,7 +207,6 @@ public class SceneryFilter implements Filter {
         root.put("templateAdapter", templateAdapter);
 
         // Merge data-model with template
-        Writer out = response.getWriter();
         try {
             temp.process(root, out);
         } catch (TemplateException e) {
@@ -190,7 +216,9 @@ public class SceneryFilter implements Filter {
 
     }
 
-    private void handleVelocityTemplate(String targetPath, String template, String encoding, HttpServletResponse response, TemplateAdapter templateAdapter, boolean adapt) throws ServletException {
+    private void handleVelocityTemplate(String targetPath, String template, String encoding,
+                                        PrintWriter out, TemplateAdapter templateAdapter, boolean adapt)
+            throws ServletException {
         Context ctx = new VelocityContext();
         for (Object property : templateAdapter.getProperties()) {
             String name = (String) property;
@@ -198,8 +226,6 @@ public class SceneryFilter implements Filter {
         }
         ctx.put("templateAdapter", templateAdapter);
 
-        // todo rewriteble default
-        response.setContentType("text/html");
         try {
             Reader reader;
             if (encoding == null) {
@@ -208,7 +234,7 @@ public class SceneryFilter implements Filter {
                 reader = new InputStreamReader(new FileInputStream(targetPath + "/" + template), encoding);
             }
             try {
-                Velocity.evaluate(ctx, response.getWriter(), "templateAdapter", reader);
+                Velocity.evaluate(ctx, out, "templateAdapter", reader);
             } finally {
                 reader.close();
             }

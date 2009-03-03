@@ -15,6 +15,10 @@
         <template test="test=include" file="freemarker/parse.ftl" />
     </scenery-set>
 
+    <!-- sitemesh -->
+    <scenery-set uri="sitemesh.do" template="sitemesh/hello.ftl" data="sitemesh/hello.scn" />
+    <scenery-set uri="sitemesh-print.do" template="sitemesh/hello.ftl" data="sitemesh/hello.scn" />
+
     <!-- other stuff -->
     <scenery-set uri="classloader.do" template="classloader/classloader.vm" data="classloader/classloader.scn">
         <data test="from=lib" description="from WEB-INF/lib" file="classloader/classloader-lib.scn" />
