@@ -24,8 +24,12 @@ public class Main {
                 app.setPath(args[++i]);
             } else if ("-u".equals(arg)) {
                 app.setUrl(args[++i]);
+            } else if ("/?".equals(arg) || "/h".equals(arg) || "-?".equals(arg) || "-h".equals(arg) || "--help".equals(arg)) {
+                usage();
+                return;
             } else {
-                System.err.println("Usage: sm [-l port] [-n name] [-p path] [-u url]");
+                usage();
+                return;
             }
 
             i++;
@@ -36,5 +40,14 @@ public class Main {
         root.addFilter(new FilterHolder(new SceneryFilter()), "/*", Handler.DEFAULT);
         root.addServlet(new ServletHolder(new ConfigServlet()), "/*");
         server.start();
+    }
+
+    private static void usage() {
+        System.err.println("Usage: sm [-l port] [-p path] [-u url]\n" +
+                "Where: \n" +
+                "\t-l\tlistening port. Default = 8080\n" +
+                "\t-p\tpath to target webapp. You can see and config that at config.do\n" +
+                "\t-u\tURL to be accessed if a file isn't found on the given <path> (see -p). Default = file://<path>"
+        );
     }
 }

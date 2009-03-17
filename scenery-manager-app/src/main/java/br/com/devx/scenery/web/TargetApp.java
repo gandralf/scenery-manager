@@ -44,7 +44,13 @@ public class TargetApp {
 
     private String pathToUrl(String path) {
         try {
-            return "file://" + new File(path).getCanonicalPath();
+            String canonicalPath = new File(path).getCanonicalPath();
+            if (File.pathSeparatorChar == '\'') {
+                // ODS POG
+                canonicalPath = "/" + canonicalPath;
+            }
+
+            return "file://" + canonicalPath;
         } catch (IOException e) {
             s_log.warn(e.toString(), e);
             return "";
