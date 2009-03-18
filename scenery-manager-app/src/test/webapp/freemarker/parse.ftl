@@ -1,1 +1,1 @@
-<#include "hello.ftl" >
+[#include "hello.ftl"]

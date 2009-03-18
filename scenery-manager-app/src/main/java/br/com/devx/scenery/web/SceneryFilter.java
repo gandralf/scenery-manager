@@ -192,6 +192,7 @@ public class SceneryFilter implements Filter {
         cfg.setEncoding(Locale.getDefault(), encoding);
         cfg.setDirectoryForTemplateLoading(new File(targetPath));
         cfg.setObjectWrapper(new DefaultObjectWrapper());
+        cfg.setTagSyntax(Configuration.AUTO_DETECT_TAG_SYNTAX);
 
         // You usually do these for many times in the application life-cycle:
 
