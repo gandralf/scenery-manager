@@ -7,7 +7,7 @@
     <groupId>scenery</groupId>
     <artifactId>scenery-app</artifactId>
     <packaging>war</packaging>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
     <name>Scenery Manager Application</name>
     <description>
         A pretty simple velocity/jsp template development engine built as an app
