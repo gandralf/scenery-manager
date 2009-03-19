@@ -61,18 +61,23 @@ public class SceneryFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
 
-        if (request.getRequestURI().endsWith("config.do")) {
+        if (request.getRequestURI().endsWith("config.do") || request.getRequestURI().endsWith("browse.do")) {
             chain.doFilter(req, resp);
         } else {
             TargetApp targetApp = AppsConfig.getInstance().getTargetApp();
             try {
-                SceneryManagerResult smr = querySceneryManager(request,
-                        targetApp.getPath() + "/WEB-INF/scenery.xml",
-                        targetApp.getPath(),
-                        targetApp.getClassLoader());
-                String template = smr.getScenery().getTemplate();
-                handleTemplate(targetApp.getPath(), template, smr.getEncoding(), request, response,
-                        smr.getTemplateAdapter(), smr.isAdapt());
+                if (targetApp.hasSceneryXml()) {
+                    SceneryManagerResult smr = querySceneryManager(request,
+                            targetApp.getPath() + "/WEB-INF/scenery.xml",
+                            targetApp.getPath(),
+                            targetApp.getClassLoader());
+                    String template = smr.getScenery().getTemplate();
+                    handleTemplate(targetApp.getPath(), template, smr.getEncoding(), request, response,
+                            smr.getTemplateAdapter(), smr.isAdapt());
+                } else {
+                    s_log.warn("Target app doesn't have a scenery.xml file");
+                    redirect(targetApp, request, response);
+                }
             } catch (IllegalArgumentException e) {
                 // todo damn ugly
                 if (!e.getMessage().contains("Scenery not found")) {

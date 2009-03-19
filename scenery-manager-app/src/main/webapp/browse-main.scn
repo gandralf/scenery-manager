@@ -1,0 +1,24 @@
+dir = {
+    name = "main";
+    canonicalName = "/Users/gandralf/devx/scenery-manager/scenery-manager-app/src/main";
+    parent = "/Users/gandralf/devx/scenery-manager/scenery-manager-app/src";
+    ready = false;
+    subdirs = collection: {
+        {
+            name = "java";
+            canonicalName = "/Users/gandralf/devx/scenery-manager/scenery-manager-app/src/main/java";
+        },
+        {
+            name = "resources";
+            canonicalName = "/Users/gandralf/devx/scenery-manager/scenery-manager-app/src/main/resources";
+        },
+        {
+            name = "sh";
+            canonicalName = "/Users/gandralf/devx/scenery-manager/scenery-manager-app/src/main/sh";
+        },
+        {
+            name = "webapp";
+            canonicalName = "/Users/gandralf/devx/scenery-manager/scenery-manager-app/src/main/webapp";
+        }
+    };
+};

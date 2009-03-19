@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<scenery-manager>
+    <scenery-set uri="setup.do" template="config.vm" data="config.scn">
+        <data description="Just an error" test="error=true" file="velocity/hello-error.scn" />
+    </scenery-set>
+    <scenery-set uri="browse.do" template="browse.vm" data="browse.scn">
+        <data description="src" test="path=/Users/gandralf/devx/scenery-manager/scenery-manager-app/src" file="browse-src.scn" />
+        <data description="main" test="path=/Users/gandralf/devx/scenery-manager/scenery-manager-app/src/main" file="browse-main.scn" />
+        <data description="webapp" test="path=/Users/gandralf/devx/scenery-manager/scenery-manager-app/src/main/webapp" file="browse-webapp.scn" />
+    </scenery-set>
+</scenery-manager>

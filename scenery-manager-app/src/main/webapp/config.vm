@@ -1,11 +1,42 @@
 <html>
-<head><title>Scenery Manager</title></head>
+<head>
+    <title>Scenery Manager</title>
+    <script type="text/javascript">
+        function selectDir(path) {
+            var pt = document.getElementById('pathText');
+            var ut = document.getElementById('urlText');
+            pt.value = path;
+            ut.value = 'file://' + path;
+        }
+
+        function goto(path) {
+            var req = new XMLHttpRequest();
+
+            req.open('GET', 'browse.do?path=' + path, false);
+            req.send("");
+            document.getElementById('dir').innerHTML = req.responseText;
+        }
+    </script>
+</head>
+
 <body>
 <h1>Current registered app</h1>
-<form action="config.do">
-    Path <br /> <input name="path" value="$targetApp.path" style="width:512px" /> <br />
-    Url <br /> <input name="url" value="$targetApp.url" style="width:640px" /> <br />
-    <input type="submit" />
+#if(!$targetApp.hasSceneryXml())
+    [Warning] File not found: $targetApp.path/scenery.xml
+#end
+
+<form action="config.do" id="configForm">
+    Path <br/> <input id="pathText" name="path" value="$targetApp.path" style="width:512px"/> <br/>
+    Url <br/> <input id="urlText" name="url" value="$targetApp.url" style="width:640px"/> <br/>
+    <input type="submit"/>
 </form>
+<hr/>
+
+<div id="dir">
+</div>
 </body>
+
+<script type="text/javascript">
+    goto('$targetApp.path');
+</script>
 </html>

@@ -68,4 +68,9 @@ public class TargetApp {
     public ClassLoader getClassLoader() {
         return m_classLoader;
     }
+
+    public boolean hasSceneryXml() {
+        File file = new File(m_path + "/WEB-INF/scenery.xml");
+        return file.exists() && file.canRead();
+    }
 }

@@ -1,0 +1,15 @@
+<h2>$dir.canonicalName</h2>
+
+<ul>
+    #if ($dir.parent)
+    <li><a href="javascript:goto('$dir.parent')">..</a></li>
+    #end
+    #foreach($subdir in $dir.subdirs)
+    <li><a href="javascript:goto('$subdir.canonicalName')">$subdir.name</a></li>
+    #end
+</ul>
+
+<input type="button" value="OK" onclick="selectDir('$dir.canonicalName');"/> <br />
+#if (!$dir.ready)
+    Warning: directory not ready (WEB-INF/scenery.xml not found)
+#end

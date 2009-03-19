@@ -1,0 +1,16 @@
+dir = {
+    name = "webapp";
+    canonicalName = "/Users/gandralf/devx/scenery-manager/scenery-manager-app/src/main/webapp";
+    parent = "/Users/gandralf/devx/scenery-manager/scenery-manager-app/src/main";
+    ready = true;
+    subdirs = collection: {
+        {
+            name = "META-INF";
+            canonicalName = "/Users/gandralf/devx/scenery-manager/scenery-manager-app/src/main/webapp/META-INF";
+        },
+        {
+            name = "WEB-INF";
+            canonicalName = "/Users/gandralf/devx/scenery-manager/scenery-manager-app/src/main/webapp/WEB-INF";
+        }
+    };
+};

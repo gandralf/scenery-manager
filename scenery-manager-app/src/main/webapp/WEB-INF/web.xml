@@ -13,12 +13,16 @@
     <servlet>
         <servlet-name>ConfigServlet</servlet-name>
         <servlet-class>br.com.devx.scenery.web.ConfigServlet</servlet-class>
-        <init-param>
-            <param-name>templateHandlers</param-name>
-            <param-value>br.com.devx.scenery.web.JspTemplateHandler, br.com.devx.scenery.web.VelocityTemplateHandler</param-value>
-        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>BrowseServlet</servlet-name>
+        <servlet-class>br.com.devx.scenery.web.BrowseServlet</servlet-class>
     </servlet>
 
+    <servlet-mapping>
+        <servlet-name>BrowseServlet</servlet-name>
+        <url-pattern>/browse.do</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ConfigServlet</servlet-name>
         <url-pattern>/*</url-pattern>

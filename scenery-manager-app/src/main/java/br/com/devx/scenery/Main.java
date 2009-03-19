@@ -5,10 +5,7 @@ import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.FilterHolder;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.Handler;
-import br.com.devx.scenery.web.SceneryFilter;
-import br.com.devx.scenery.web.ConfigServlet;
-import br.com.devx.scenery.web.AppsConfig;
-import br.com.devx.scenery.web.TargetApp;
+import br.com.devx.scenery.web.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -38,6 +35,7 @@ public class Main {
         Server server = new Server(port);
         Context root = new Context(server,"/", Context.SESSIONS);
         root.addFilter(new FilterHolder(new SceneryFilter()), "/*", Handler.DEFAULT);
+        root.addServlet(new ServletHolder(new BrowseServlet()), "/browse.do");
         root.addServlet(new ServletHolder(new ConfigServlet()), "/*");
         server.start();
     }

@@ -1,0 +1,16 @@
+dir = {
+    name = "src";
+    canonicalName = "/Users/gandralf/devx/scenery-manager/scenery-manager-app/src";
+    parent = "/Users/gandralf/devx/scenery-manager/scenery-manager-app";
+    ready = false;
+    subdirs = collection: {
+        {
+            name = "main";
+            canonicalName = "/Users/gandralf/devx/scenery-manager/scenery-manager-app/src/main";
+        },
+        {
+            name = "test";
+            canonicalName = "/Users/gandralf/devx/scenery-manager/scenery-manager-app/src/test";
+        }
+    };
+};

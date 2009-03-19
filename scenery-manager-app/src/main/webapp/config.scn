@@ -1,0 +1,4 @@
+targetApp = {
+    path = "/Users/gandralf/devx/scenery-manager/scenery-manager-app/";
+    url = "file://Users/gandralf/devx/scenery-manager/scenery-manager-app/";
+};
