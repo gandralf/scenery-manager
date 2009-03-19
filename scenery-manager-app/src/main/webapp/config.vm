@@ -2,7 +2,7 @@
 <head><title>Scenery Manager</title></head>
 <body>
 <h1>Current registered app</h1>
-<form target="config.do">
+<form action="config.do">
     Path <br /> <input name="path" value="$targetApp.path" style="width:512px" /> <br />
     Url <br /> <input name="url" value="$targetApp.url" style="width:640px" /> <br />
     <input type="submit" />
