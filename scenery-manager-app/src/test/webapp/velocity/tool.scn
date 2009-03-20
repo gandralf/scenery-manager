@@ -1,0 +1,5 @@
+java = <![CDATA[He didn't say, "Stop!"]]>;
+javascript = <![CDATA[He didn't say, "Stop!"]]>;
+html = <![CDATA["bread" & "butter"]]>;
+xml = <![CDATA["bread" & "butter"]]>;
+url = "hello here & there";

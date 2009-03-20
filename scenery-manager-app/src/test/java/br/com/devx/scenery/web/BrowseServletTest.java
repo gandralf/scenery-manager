@@ -24,6 +24,14 @@ public class BrowseServletTest extends HttpUnitTestCase {
         assertFalse("It should be ready", text.contains("warning"));
     }
 
+    public void testJavaScript() throws IOException, SAXException {
+        WebRequest request   = new GetMethodWebRequest( "http://blog.gonow.intranet/browse.do?path=." );
+        WebResponse response = m_client.getResponse(request);
+        String text = response.getText().toLowerCase();
+
+        assertFalse(text.contains("$escape"));
+    }
+
     public void testSrcDir() throws IOException, SAXException {
         WebRequest request   = new GetMethodWebRequest( "http://blog.gonow.intranet/browse.do?path=.." );
         WebResponse response = m_client.getResponse(request);

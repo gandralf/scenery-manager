@@ -1,0 +1,16 @@
+<pre>
+\$java                           -> $java
+\$escape.java($java)             -> $escape.java($java)
+
+\$javascript                     -> $javascript
+\$escape.javascript($javascript) -> $escape.javascript($javascript)
+
+\$html                           -> $html
+\$escape.html($html)             -> $escape.html($html)
+
+\$xml                            -> $xml"
+\$escape.xml($xml)               -> $escape.xml($xml)
+
+\$url                            -> $url
+\$escape.url                     -> $escape.url($url)
+</pre>

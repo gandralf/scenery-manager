@@ -32,6 +32,7 @@ public class ConfigServlet extends HttpServlet {
         ctx.put("targetApp", config.getTargetApp());
         
         try {
+            VelocityHelper.setupTools(getServletContext().getRealPath("/"), ctx);
             Velocity.mergeTemplate("config.vm", response.getCharacterEncoding(), ctx, response.getWriter());
         } catch (Exception e) {
             throw new ServletException(e);

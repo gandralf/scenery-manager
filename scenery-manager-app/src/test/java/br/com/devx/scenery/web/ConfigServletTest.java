@@ -6,6 +6,7 @@ import com.meterware.httpunit.WebResponse;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 
 public class ConfigServletTest extends HttpUnitTestCase {
     @Override
@@ -23,6 +24,13 @@ public class ConfigServletTest extends HttpUnitTestCase {
         assertContains(text, "\".\"");
         assertContains(text, "file://");
         assertContains(text, "scenery-manager-app/src/main/webapp");
+    }
+
+    public void testBrowseIntegration() throws IOException, SAXException {
+        WebRequest request   = new GetMethodWebRequest( "http://blog.gonow.intranet/config.do" );
+        WebResponse response = m_client.getResponse(request);
+        String text = response.getText().toLowerCase();
+        assertFalse("Toolbox isn't working", text.contains("$escape"));
     }
 
     public void testSetConfig() throws IOException, SAXException {

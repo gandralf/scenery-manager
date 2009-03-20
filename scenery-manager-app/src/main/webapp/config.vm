@@ -12,7 +12,7 @@
         function goto(path) {
             var req = new XMLHttpRequest();
 
-            req.open('GET', 'browse.do?path=' + path, false);
+            req.open('GET', 'browse.do?path=' + escape(path), false);
             req.send("");
             document.getElementById('dir').innerHTML = req.responseText;
         }
@@ -37,6 +37,6 @@
 </body>
 
 <script type="text/javascript">
-    goto('$targetApp.path');
+    goto('$escape.javascript($targetApp.path)');
 </script>
 </html>

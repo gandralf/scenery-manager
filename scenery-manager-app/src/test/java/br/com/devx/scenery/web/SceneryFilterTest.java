@@ -79,6 +79,15 @@ public class SceneryFilterTest extends HttpUnitTestCase {
         assertTrue(text.contains("<td bgcolor=\"blue\">hello</td>"));
     }
 
+    public void testVelocityTools() throws IOException, SAXException {
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/tool.do" );
+        WebResponse response = m_client.getResponse( request );
+        String text = response.getText();
+        assertTrue(text.contains("He didn't say, \\\"Stop!\\\""));
+        assertTrue(text.contains("&quot;bread&quot; &amp; &quot;butter&quot;"));
+        assertTrue(text.contains("hello+here+%26+there"));
+    }
+
     public void testWebInfClasses() throws IOException, SAXException {
         WebRequest request   = new GetMethodWebRequest( "http://localhost/classloader.do" );
         WebResponse response = m_client.getResponse( request );

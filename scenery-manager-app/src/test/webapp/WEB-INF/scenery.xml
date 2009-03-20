@@ -5,6 +5,8 @@
         <data description="Just an error" test="error=true" file="velocity/hello-error.scn" />
     </scenery-set>
 
+    <scenery-set uri="tool.do" template="velocity/tool.vm" data="velocity/tool.scn" />
+
     <!-- advanced velocity -->
     <scenery-set uri="velocityx.do" template="velocity/macro.vm" data="velocity/macro.scn" >
         <template description="parse" test="test=parse" file="velocity/parse.vm" />

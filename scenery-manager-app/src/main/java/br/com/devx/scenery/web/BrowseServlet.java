@@ -23,6 +23,7 @@ public class BrowseServlet extends HttpServlet {
         }
 
         File dir = new File(path);
+        s_log.debug("Looking at " + path);
         if (!dir.exists() || !dir.isDirectory() || !dir.canRead()) {
             s_log.warn("Invalid directory: " + dir.getCanonicalPath() + ". Using current dir");
             dir = new File("."); // Recover time
@@ -31,6 +32,7 @@ public class BrowseServlet extends HttpServlet {
         BrowseDirectory browseDirectory = new BrowseDirectory(dir, true);
 
         Context ctx = new VelocityContext();
+        VelocityHelper.setupTools(getServletContext().getRealPath("/"), ctx);
         ctx.put("dir", browseDirectory);
 
         try {

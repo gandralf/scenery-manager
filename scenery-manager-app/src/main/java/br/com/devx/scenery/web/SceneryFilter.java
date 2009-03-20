@@ -233,6 +233,7 @@ public class SceneryFilter implements Filter {
         ctx.put("templateAdapter", templateAdapter);
 
         try {
+            VelocityHelper.setupTools(targetPath, ctx);
             Reader reader;
             if (encoding == null) {
                 reader = new FileReader(targetPath + "/" + template);

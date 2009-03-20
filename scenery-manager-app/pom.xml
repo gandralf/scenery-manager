@@ -62,6 +62,11 @@
             <artifactId>freemarker</artifactId>
             <version>2.3.15</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-tools</artifactId>
+            <version>1.4</version>
+        </dependency>
     </dependencies>
 
     <build>
