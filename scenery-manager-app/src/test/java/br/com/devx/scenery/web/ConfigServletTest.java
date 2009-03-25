@@ -6,7 +6,6 @@ import com.meterware.httpunit.WebResponse;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 
 public class ConfigServletTest extends HttpUnitTestCase {
     @Override
@@ -39,7 +38,7 @@ public class ConfigServletTest extends HttpUnitTestCase {
         String text = response.getText().toLowerCase();
 
         assertContains(text, "\"../../test/webapp\"");
-        assertContains(text, "file://");
+        assertContains(text, "file:/");
         assertContains(text, "scenery-manager-app/src/test/webapp");
     }
 

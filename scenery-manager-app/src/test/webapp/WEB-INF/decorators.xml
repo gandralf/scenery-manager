@@ -9,6 +9,10 @@
         <pattern>/sitemesh*</pattern>
     </decorator>
 
+    <decorator name="vmmain" page="main.vm">
+        <pattern>/vmsitemesh*</pattern>
+    </decorator>
+
     <excludes>
         <pattern>/index.dec</pattern>
     </excludes>

@@ -106,9 +106,20 @@ public class SceneryFilterTest extends HttpUnitTestCase {
         WebRequest request   = new GetMethodWebRequest( "http://localhost/sitemesh.do" );
         WebResponse response = m_client.getResponse( request );
         String text = response.getText();
-        assertTrue(text.contains("Hello, Zeh maneh!"));
+        assertTrue("Didn't load hello.ftl (body)", text.contains("Hello, Zeh maneh!"));
         assertTrue("Didn't load main.flt decorator", text.contains("<title>Hello, sitemesh!</title>"));
         assertTrue("Didn't load main.flt decorator", text.contains("Welcome to the world"));
+    }
+
+    public void testVMSitemesh() throws IOException, SAXException {
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/vmsitemesh.do" );
+        WebResponse response = m_client.getResponse( request );
+        String text = response.getText();
+        System.out.println(text);
+        assertTrue("Didn't load hello.vm (body)", text.contains("Hello, Zeh maneh!"));
+        assertTrue("Didn't load main.vm decorator", text.contains("<title>Hello, sitemesh!</title>"));
+        assertTrue("Didn't load main.vm decorator", text.contains("Welcome to the world"));
+        assertTrue("Didn't load hello.vm (body)", text.contains("This is velocity!"));
     }
 
     public void testSitemeshPrint() throws IOException, SAXException {
