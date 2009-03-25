@@ -140,11 +140,15 @@ public class SceneryFilter implements Filter {
         }
 
         InputStream in = urlConnection.getInputStream();
-        ServletOutputStream out = response.getOutputStream();
-        byte[] buff = new byte[1024];
-        int len;
-        while((len = in.read(buff)) != -1) {
-            out.write(buff, 0, len);
+        try {
+            ServletOutputStream out = response.getOutputStream();
+            byte[] buff = new byte[1024];
+            int len;
+            while((len = in.read(buff)) != -1) {
+                out.write(buff, 0, len);
+            }
+        } finally {
+            in.close();
         }
     }
 
