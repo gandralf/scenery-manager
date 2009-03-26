@@ -115,11 +115,23 @@ public class SceneryFilterTest extends HttpUnitTestCase {
         WebRequest request   = new GetMethodWebRequest( "http://localhost/vmsitemesh.do" );
         WebResponse response = m_client.getResponse( request );
         String text = response.getText();
-        System.out.println(text);
         assertTrue("Didn't load hello.vm (body)", text.contains("Hello, Zeh maneh!"));
         assertTrue("Didn't load main.vm decorator", text.contains("<title>Hello, sitemesh!</title>"));
         assertTrue("Didn't load main.vm decorator", text.contains("Welcome to the world"));
         assertTrue("Didn't load hello.vm (body)", text.contains("This is velocity!"));
+    }
+
+    public void testHeadBody() throws IOException, SAXException {
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/vmsitemesh-head-body.do" );
+        WebResponse response = m_client.getResponse( request );
+        String text = response.getText();
+        assertTrue("Didn't load hello.vm (body)", text.contains("Hello, Zeh maneh!"));
+        assertTrue("Didn't load main.vm decorator", text.contains("<title>Hello, sitemesh!</title>"));
+        assertTrue("Didn't load main.vm decorator", text.contains("Welcome to the world"));
+        
+        assertEquals("Double html", -1, text.indexOf("<html>", text.indexOf("<html>") + 1));
+        assertEquals("Double head", -1, text.indexOf("<head>", text.indexOf("<head>") + 1));
+        assertEquals("Double body", -1, text.indexOf("<body>", text.indexOf("<body>") + 1));
     }
 
     public void testSitemeshPrint() throws IOException, SAXException {

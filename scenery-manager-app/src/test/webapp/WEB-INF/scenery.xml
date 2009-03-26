@@ -21,6 +21,7 @@
     <scenery-set uri="sitemesh.do" template="sitemesh/hello.ftl" data="sitemesh/hello.scn" />
     <scenery-set uri="sitemesh-print.do" template="sitemesh/hello.ftl" data="sitemesh/hello.scn" />
     <scenery-set uri="vmsitemesh.do" template="sitemesh/hello.vm" data="sitemesh/hello.scn" />
+    <scenery-set uri="vmsitemesh-head-body.do" template="sitemesh/head-body.vm" data="sitemesh/hello.scn" />
 
     <!-- other stuff -->
     <scenery-set uri="classloader.do" template="classloader/classloader.vm" data="classloader/classloader.scn">

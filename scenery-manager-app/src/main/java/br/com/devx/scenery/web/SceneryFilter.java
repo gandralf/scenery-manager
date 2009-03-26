@@ -176,8 +176,10 @@ public class SceneryFilter implements Filter {
                 // Write the decorator to a memory out
                 doHandleTemplate(targetPath, template, encoding, templateAdapter, adapt, new PrintWriter(sout));
                 // and decorate it
-                templateAdapter.put("head", "");
-                templateAdapter.put("body", sout.toString());
+                sitemesh.decorate(sout.toString());
+
+                templateAdapter.put("head", sitemesh.get("head"));
+                templateAdapter.put("body", sitemesh.get("body"));
                 doHandleTemplate(targetPath, sitemesh.getTemplate(), encoding, templateAdapter, adapt, out);
             }
         } catch (SitemeshException e) {

@@ -1,0 +1,8 @@
+<html>
+<head>
+<script type="text/javascript">alert("Hello");</script>
+</head>
+<body>
+Hello, $name!
+</body>
+</html>
