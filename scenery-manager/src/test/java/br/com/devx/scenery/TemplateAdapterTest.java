@@ -99,6 +99,57 @@ public class TemplateAdapterTest extends TestCase {
         TemplateAdapterTestHelper.assertEquals(expected, actual);
     }
 
+    public void testToAccessedString() throws ParseException {
+        TemplateAdapter full = sampleTemplateAdapter();
+        // No value
+
+        assertEquals("{\n}", full.toAccessedString().trim());
+
+        // Just one value
+        ((Map) full).get("intValue"); // just a get
+        assertEquals("intValue = 123;", full.toAccessedString().substring(1, full.toAccessedString().length() -1).trim());
+
+        // Two values: une of them is a map, but no inner access to object "x"
+        Map mapValue = (Map) ((Map) full).get("mapValue");
+        String expected =
+                "mapValue = map: {\n" +
+                "    \"a\" = 1415, \n" +
+                "    \"b\" = 1617, \n" +
+                "    \"x\" = {\n" +
+                "    }\n" +
+                "};\n" +
+                "intValue = 123;\n";
+
+        String actual = full.toAccessedString().substring(1, full.toAccessedString().length() -1);
+        TemplateAdapterTestHelper.assertEquals(expected, actual);
+
+        // Inner property access: mapValue.x.message
+        ((Map) mapValue.get("x")).get("message");
+        expected =
+                "mapValue = map: {\n" +
+                "    \"a\" = 1415, \n" +
+                "    \"b\" = 1617, \n" +
+                "    \"x\" = {\n" +
+                "        message = \"Hello again...\";\n" +
+                "    }\n" +
+                "};\n" +
+                "intValue = 123;\n";
+        actual = full.toAccessedString().substring(1, full.toAccessedString().length() -1);
+        TemplateAdapterTestHelper.assertEquals(expected, actual);
+    }
+
+    public void testWrappedAccessedString() {
+        WrapperTestTargetBase target = new WrapperTestTargetBase();
+        TemplateAdapter ta = new TemplateAdapter();
+        ta.get("intValue");
+        ta.wrapp(target);
+
+        String expected = "{\n" +
+                "    intValue = 0;\n" +
+                "}";
+        assertEquals(expected, ta.toAccessedString());
+    }
+
     public void testWrappedClassToString() throws ParseException {
         TemplateAdapter actual = new TemplateAdapter();
         actual.put("mapProperty", 100);

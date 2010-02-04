@@ -44,6 +44,7 @@ import java.util.*;
 public class TemplateAdapter extends HashMap<String, Object> {
     private TemplateFormatStrategy m_formatStrategy;
     private ObjectWrapper m_wrappedObject;
+    private Set<String> m_accessedProperties;
 
     /**
      * Constructs a new TemplateAdapter object using the default format strategy.
@@ -52,6 +53,7 @@ public class TemplateAdapter extends HashMap<String, Object> {
     public TemplateAdapter() {
         m_formatStrategy = new TemplateFormatStrategy();
         m_wrappedObject = null;
+        m_accessedProperties = new HashSet<String>();
     }
 
     /**
@@ -140,6 +142,7 @@ public class TemplateAdapter extends HashMap<String, Object> {
      *      adapt method.
      */
     public Object get(String name) {
+        m_accessedProperties.add(name);
         Object result;
         if (m_wrappedObject == null || !m_wrappedObject.containsProperty(name)) {
             result = super.get(name);
@@ -156,6 +159,11 @@ public class TemplateAdapter extends HashMap<String, Object> {
         }
 
         return result;
+    }
+
+    public Object get(Object key) {
+        m_accessedProperties.add(key.toString());
+        return super.get(key);
     }
 
     /**
@@ -277,6 +285,14 @@ public class TemplateAdapter extends HashMap<String, Object> {
     }
 
     /**
+     *  
+     * @return the accessed properties in .scn file format content
+     */
+    public String toAccessedString() {
+        return new TemplateAdapterPrinter(this).toUsedString(0);
+    }
+
+    /**
      * <p>Wrapps a source object, so furter access to {@link #adapt} or {@link #get} methods will
      * access <code>source</code>'s properties.</p>
      * If <code>source</code> is a <code>Map</code>, all it's entries will be imported like making a
@@ -353,6 +369,10 @@ public class TemplateAdapter extends HashMap<String, Object> {
         }
 
         return result;
+    }
+
+    public Collection<String> getAccessedProperties() {
+        return m_accessedProperties;
     }
 
     public boolean equals(Object o) {

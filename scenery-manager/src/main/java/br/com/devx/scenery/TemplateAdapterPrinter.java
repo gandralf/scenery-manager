@@ -14,11 +14,21 @@ class TemplateAdapterPrinter {
     }
 
     String toString(int ident) {
+        return toString(ident, true);
+    }
+
+
+    String toUsedString(int ident) {
+        return toString(ident, false);
+    }
+
+    private String toString(int ident, boolean all) {
+        Collection<String> properties = all ? templateAdapter.getProperties() : templateAdapter.getAccessedProperties();
         String identString = getIdent(ident);
         StringBuffer result;
         result = new StringBuffer("{\n");
 
-        Iterator i = templateAdapter.getProperties().iterator();
+        Iterator i = properties.iterator();
         while (i.hasNext()) {
             String key = (String) i.next();
             Object value = templateAdapter.get(key);
@@ -37,7 +47,7 @@ class TemplateAdapterPrinter {
                 }
             }
 
-            appendValue(value, result, ident);
+            appendValue(value, result, ident, all);
 
             result.append(";\n");
         }
@@ -56,7 +66,7 @@ class TemplateAdapterPrinter {
         return result.toString();
     }
 
-    private void appendValue(Object value, StringBuffer result, int ident) {
+    private void appendValue(Object value, StringBuffer result, int ident, boolean all) {
         if (value == null) {
             result.append("null");
         } else if (value instanceof String) {
@@ -85,11 +95,11 @@ class TemplateAdapterPrinter {
             }
         } else if (value instanceof TemplateAdapter) {
             TemplateAdapter adapter = (TemplateAdapter) value;
-            result.append(new TemplateAdapterPrinter(adapter).toString(ident + 1));
+            result.append(new TemplateAdapterPrinter(adapter).toString(ident + 1, all));
         } else if (value.getClass().isArray()) {
             result.append("{ ");
             for (int j = 0; j < Array.getLength(value); j++) {
-                appendValue(Array.get(value, j), result, ident);
+                appendValue(Array.get(value, j), result, ident, all);
                 if (j != Array.getLength(value) -1) {
                     result.append(", ");
                 }
@@ -105,9 +115,9 @@ class TemplateAdapterPrinter {
                 Object key = j.next();
                 Object mapValue = map.get(key);
                 result.append(identStr);
-                appendValue(key, result, ident);
+                appendValue(key, result, ident, all);
                 result.append(" = ");
-                appendValue(mapValue, result, ident + 1);
+                appendValue(mapValue, result, ident + 1, all);
                 if (j.hasNext()) {
                     result.append(", ");
                 }
@@ -123,7 +133,7 @@ class TemplateAdapterPrinter {
             while(j.hasNext()) {
                 Object item = j.next();
                 result.append(identStr);
-                appendValue(item, result, ident + 1);
+                appendValue(item, result, ident + 1, all);
                 if (j.hasNext()) {
                     result.append(", ");
                 }
@@ -136,7 +146,7 @@ class TemplateAdapterPrinter {
                 TemplateAdapter wrappedValue = new TemplateAdapter();
                 wrappedValue.wrapp(value);
                 TemplateAdapterPrinter adapterPrinter = new TemplateAdapterPrinter(wrappedValue);
-                result.append(adapterPrinter.toString(ident + 1));
+                result.append(adapterPrinter.toString(ident + 1, all));
             } else {
                 result.append(value);
             }

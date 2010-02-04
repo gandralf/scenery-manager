@@ -6,7 +6,7 @@
 
     <groupId>scenery</groupId>
     <artifactId>scenery</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
     <name>Scenery Manager</name>
     <description>
         A pretty simple velocity/jsp template development engine
