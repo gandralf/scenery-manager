@@ -1,5 +1,5 @@
 mvn clean test 
-DIST=scenery-app-1.0-SNAPSHOT
+DIST=scenery-app-1.0
 mkdir target/$DIST
 
 cd src/main/webapp
