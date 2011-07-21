@@ -1,0 +1,7 @@
+*.class
+*.jar
+*.zip
+*.tar.gz
+target
+*/src/main/webapp/WEB-INF/classes/
+.DS_Store

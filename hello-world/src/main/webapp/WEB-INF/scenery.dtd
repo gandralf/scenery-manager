@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!ELEMENT scenery-manager (scenery-set+)>
+
+<!ELEMENT scenery-set (template*, data*)>
+<!ATTLIST scenery-set
+	uri CDATA #REQUIRED
+	template CDATA #REQUIRED
+	data CDATA #REQUIRED
+	description CDATA #IMPLIED
+    adapt (yes | no | true | false) "true"
+>
+
+<!ELEMENT template EMPTY>
+<!ATTLIST template
+	test CDATA #REQUIRED
+	file CDATA #REQUIRED
+	description CDATA #IMPLIED
+>
+
+<!ELEMENT data EMPTY>
+<!ATTLIST data
+	test CDATA #REQUIRED
+	file CDATA #REQUIRED
+	description CDATA #IMPLIED
+>

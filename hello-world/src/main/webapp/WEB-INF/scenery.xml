@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        
+<scenery-manager>
+    <scenery-set uri="/john" template="/home/index.ftl" data="/home/john.scn" />
+    <scenery-set uri="/home" template="/home/index.ftl" data="/home/anonymous.scn" />
+</scenery-manager>
