@@ -1,13 +1,6 @@
 Scenery Manager
 ===============
 
-A tool to help front-end developers.
-
-The big picture
----------------
-
-###￼The problem
-
 To develop a template (jsp, velocity, free maker...), you need all-that-messy-server-side stuff up and running. You have to mess with maven, libraries, databases, endless configuration stuff, right?
 
 That means that you are quite dependent. The more dependent, the less freedom.
@@ -23,12 +16,12 @@ A view (usually a jsp/velocity/free marker/... template) gets some data/objects 
     ...
 
 To make it work, you just need to:
-# Write a fake data (file) with the value of all those variables (like user.name). This usually stays in .scn (scenery) files.
-# Merge both files (template and data):
-## Define the URL mapping. Each URL combines a template and a scenery data file. Like: for "/home" URL, merges "/home/index.ftl" template and "/home/john.scn" fake data file. This is done in a very simple configuration file in "WEB-INF/scenery.xml"
-## Run the scenery manager app and tell it where your webapp is
-## Access http://localhost/home to see what happens with your template when it receves such data.
 
+1. Write a fake data (file) with the value of all those variables (like user.name). This usually stays in .scn (scenery) files.
+2. Merge both files (template and data):
+2.1. Define the URL mapping. Each URL combines a template and a scenery data file. Like: for "/home" URL, merges "/home/index.ftl" template and "/home/john.scn" fake data file. This is done in a very simple configuration file in "WEB-INF/scenery.xml"
+2.2. Run the scenery manager app and tell it where your webapp is
+2.3. Access http://localhost/home to see what happens with your template when it receves such data.
 
 Templates
 ---------
@@ -88,16 +81,16 @@ Running scenery manager app
 
 Supose that the demo app is located at $HOME/hello-world, and the wabapp source in ./src/main/webapp. Just run:
 
-cd <scenery-manager-app directory>
-./run.sh -p $HOME/hello-world/src/main/webapp
+    cd <scenery-manager-app directory>
+    ./run.sh -p $HOME/hello-world/src/main/webapp
 
 Summing up
 ==========
 
 Scenery manager assigns URLs to a fake data file and a template. And when you access that URL, it “merges” both files and shows you the result.
 
-# Develop and test the view with freedom
-# Stress different scenarios
-# Minimum overhead
-# Useful even when the server-side component is done
-# Not a prototype solution, but can be used so
+- Develop and test the view with freedom
+- Stress different scenarios
+- Minimum overhead
+- Useful even when the server-side component is done
+- Not a prototype solution, but can be used so
