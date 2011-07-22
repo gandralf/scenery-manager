@@ -5,3 +5,6 @@
 target
 */src/main/webapp/WEB-INF/classes/
 .DS_Store
+*.iml
+*.ipr
+*.iws

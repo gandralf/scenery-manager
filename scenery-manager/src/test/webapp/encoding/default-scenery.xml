@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scenery-manager>
+    <scenery-set uri="blah.do" template="blah.vm" data="default.scn" />
+</scenery-manager>

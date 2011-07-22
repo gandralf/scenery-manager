@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scenery-manager encoding="ISO-8859-1">
+    <scenery-set uri="blah.do" template="blah.vm" data="iso-8859-1.scn" />
+</scenery-manager>
