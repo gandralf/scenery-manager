@@ -25,6 +25,11 @@ public class TargetApp {
     }
 
     public void setPath(String path) {
+        // preconditions
+        File file = new File(path);
+        if (!file.exists() || !file.isDirectory()) {
+            throw new IllegalArgumentException("Directory not found: " + file.getAbsolutePath());
+        }
         if (isSync(m_path, m_url)) {
             m_url = pathToUrl(path);
         }
@@ -45,7 +50,7 @@ public class TargetApp {
     private String pathToUrl(String path) {
         try {
             File file = new File(new File(path).getCanonicalPath());
-            return file.toURL().toString();
+            return file.toURI().toURL().toString();
         } catch (IOException e) {
             s_log.warn(e.toString(), e);
             return "";
