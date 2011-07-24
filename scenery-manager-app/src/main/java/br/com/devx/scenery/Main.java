@@ -1,6 +1,6 @@
 package br.com.devx.scenery;
 
-import org.mortbay.jetty.servlet.ServletHolder;
+import org.apache.log4j.Logger;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.FilterHolder;
 import org.mortbay.jetty.Server;
@@ -8,7 +8,10 @@ import org.mortbay.jetty.Handler;
 import br.com.devx.scenery.web.*;
 
 public class Main {
-    public static void main(String[] args) throws Exception {
+    private static final Logger log = Logger.getLogger(Main.class);
+    private Server server;
+
+    public Main(String[] args) {
         int port = 8080;
         int i = 0;
         TargetApp app = AppsConfig.getInstance().getTargetApp();
@@ -32,16 +35,27 @@ public class Main {
             i++;
         }
 
-        Server server = new Server(port);
+        log.info("Server ready. Access http://localhost:" + port + "/ to browse files at " + app.getPath());
+        server = new Server(port);
         Context root = new Context(server,"/", Context.SESSIONS);
         root.addFilter(new FilterHolder(new SceneryFilter()), "/*", Handler.DEFAULT);
-        root.addServlet(new ServletHolder(new BrowseServlet()), "/browse.do");
-        root.addServlet(new ServletHolder(new ConfigServlet()), "/*");
+        root.addServlet(DummyServlet.class, "/*"); // Without a servlet, the filter won't work
+    }
+
+    public void run() throws Exception {
         server.start();
     }
 
+    public boolean ready() {
+        return server.isStarted();
+    }
+
+    public static void main(String[] args) throws Exception {
+        new Main(args).run();
+    }
+
     private static void usage() {
-        System.err.println("Usage: sm [-l port] [-p path] [-u url]\n" +
+        System.err.println("Usage: scenery [-l port] [-p path] [-u url]\n" +
                 "Where: \n" +
                 "\t-l\tlistening port. Default = 8080\n" +
                 "\t-p\tpath to target webapp. You can see and config that at config.do\n" +
