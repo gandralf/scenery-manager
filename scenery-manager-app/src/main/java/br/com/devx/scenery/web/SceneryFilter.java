@@ -61,34 +61,30 @@ public class SceneryFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
 
-        if (request.getRequestURI().endsWith("config.do") || request.getRequestURI().endsWith("browse.do")) {
-            chain.doFilter(req, resp);
-        } else {
-            TargetApp targetApp = AppsConfig.getInstance().getTargetApp();
-            try {
-                if (targetApp.hasSceneryXml()) {
-                    SceneryManagerResult smr = querySceneryManager(request,
-                            targetApp.getPath() + "/WEB-INF/scenery.xml",
-                            targetApp.getPath(),
-                            targetApp.getClassLoader());
-                    String template = smr.getScenery().getTemplate();
-                    handleTemplate(targetApp.getPath(), template, smr.getEncoding(), request, response,
-                            smr.getTemplateAdapter(), smr.isAdapt());
-                } else {
-                    s_log.warn("Target app doesn't have a scenery.xml file");
-                    redirect(targetApp, request, response);
-                }
-            } catch (IllegalArgumentException e) {
-                // todo damn ugly
-                if (!e.getMessage().contains("Scenery not found")) {
-                     throw e;
-                }
+        TargetApp targetApp = AppsConfig.getInstance().getTargetApp();
+        try {
+            if (targetApp.hasSceneryXml()) {
+                SceneryManagerResult smr = querySceneryManager(request,
+                        targetApp.getPath() + "/WEB-INF/scenery.xml",
+                        targetApp.getPath(),
+                        targetApp.getClassLoader());
+                String template = smr.getScenery().getTemplate();
+                handleTemplate(targetApp.getPath(), template, smr.getEncoding(), request, response,
+                        smr.getTemplateAdapter(), smr.isAdapt());
+            } else {
+                s_log.warn("Target app doesn't have a scenery.xml file");
                 redirect(targetApp, request, response);
-            } catch (SceneryFileException e) { // Scn file error
-                handleTemplate(".", "errorReport.vm", "iso-8859-1", request, response, error(e), false);
-            } catch (SceneryManagerException e) { // Wtf error
-                throw new ServletException(e);
             }
+        } catch (IllegalArgumentException e) {
+            // todo damn ugly
+            if (!e.getMessage().contains("Scenery not found")) {
+                 throw e;
+            }
+            redirect(targetApp, request, response);
+        } catch (SceneryFileException e) { // Scn file error
+            handleTemplate(".", "errorReport.vm", "iso-8859-1", request, response, error(e), false);
+        } catch (SceneryManagerException e) { // Wtf error
+            throw new ServletException(e);
         }
     }
 
@@ -241,10 +237,11 @@ public class SceneryFilter implements Filter {
         try {
             VelocityHelper.setupTools(targetPath, ctx);
             Reader reader;
+            String fileName = new File(targetPath + "/" + template).getCanonicalPath();
             if (encoding == null) {
-                reader = new FileReader(targetPath + "/" + template);
+                reader = new FileReader(fileName);
             } else {
-                reader = new InputStreamReader(new FileInputStream(targetPath + "/" + template), encoding);
+                reader = new InputStreamReader(new FileInputStream(fileName), encoding);
             }
             try {
                 Velocity.evaluate(ctx, out, "templateAdapter", reader);

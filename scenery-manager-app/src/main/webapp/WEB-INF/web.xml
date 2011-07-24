@@ -11,20 +11,12 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <servlet>
-        <servlet-name>ConfigServlet</servlet-name>
-        <servlet-class>br.com.devx.scenery.web.ConfigServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>BrowseServlet</servlet-name>
-        <servlet-class>br.com.devx.scenery.web.BrowseServlet</servlet-class>
+        <servlet-name>DummyServlet</servlet-name>
+        <servlet-class>br.com.devx.scenery.web.DummyServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>BrowseServlet</servlet-name>
-        <url-pattern>/browse.do</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ConfigServlet</servlet-name>
+        <servlet-name>DummyServlet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
 </web-app>

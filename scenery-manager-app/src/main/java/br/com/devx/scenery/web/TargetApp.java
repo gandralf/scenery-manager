@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 
 /**
  * todo check path and URL
@@ -16,8 +17,7 @@ public class TargetApp {
     private ClassLoader m_classLoader;
 
     public TargetApp(String path) {
-        m_path = path;
-        m_url = pathToUrl(path);
+        setPath(path);
     }
 
     public String getPath() {
@@ -26,15 +26,21 @@ public class TargetApp {
 
     public void setPath(String path) {
         // preconditions
-        File file = new File(path);
-        if (!file.exists() || !file.isDirectory()) {
-            throw new IllegalArgumentException("Directory not found: " + file.getAbsolutePath());
-        }
-        if (isSync(m_path, m_url)) {
-            m_url = pathToUrl(path);
-        }
+        try {
+            File file = new File(path).getCanonicalFile();
+            path = file.getCanonicalPath();
+            if (!file.exists() || !file.isDirectory()) {
+                throw new IllegalArgumentException("Directory not found: " + file.getAbsolutePath());
+            }
 
-        m_path = path;
+            if (m_url == null || isSync(m_path, m_url)) {
+                m_url = pathToUrl(path);
+            }
+
+            m_path = path;
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
 
         setupClassLoader();
     }
@@ -43,18 +49,13 @@ public class TargetApp {
         m_classLoader = new TargetAppClassLoader(m_path);
     }
 
-    private boolean isSync(String path, String url) {
+    private boolean isSync(String path, String url) throws MalformedURLException {
         return pathToUrl(path).equals(url);
     }
 
-    private String pathToUrl(String path) {
-        try {
-            File file = new File(new File(path).getCanonicalPath());
-            return file.toURI().toURL().toString();
-        } catch (IOException e) {
-            s_log.warn(e.toString(), e);
-            return "";
-        }
+    private String pathToUrl(String path) throws MalformedURLException {
+        File file = new File(path);
+        return file.toURI().toURL().toString();
     }
 
     public String getUrl() {
@@ -70,7 +71,11 @@ public class TargetApp {
     }
 
     public boolean hasSceneryXml() {
-        File file = new File(m_path + "/WEB-INF/scenery.xml");
-        return file.exists() && file.canRead();
+        try {
+            File file = new File(m_path + "/WEB-INF/scenery.xml").getCanonicalFile();
+            return file.exists() && file.canRead();
+        } catch (IOException e) {
+            return false;
+        }
     }
 }

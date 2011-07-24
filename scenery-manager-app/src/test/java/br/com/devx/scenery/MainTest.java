@@ -15,6 +15,11 @@ public class MainTest extends TestCase {
         mainThread = new MainThread();
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        mainThread.stopServer();
+    }
+
     public void testPort() throws InterruptedException, IOException {
         mainThread.start("-l 8000");
         URLConnection urlConnection = new URL("http://localhost:8000/").openConnection();
@@ -22,7 +27,7 @@ public class MainTest extends TestCase {
     }
 
     public void testPath() throws InterruptedException, IOException {
-        mainThread.start("-p ../../test/webapp");
+        mainThread.start("-p src/test/webapp");
         String sb = fetch("http://localhost:8080/velocity.do");
         assertTrue(sb.contains("Hello"));
     }
@@ -46,7 +51,7 @@ public class MainTest extends TestCase {
             super("server");
         }
 
-        public void start(String args) throws InterruptedException {
+        public void start(String args) throws InterruptedException, IOException {
             main = new Main(args.split("\\s+"));
             start();
             while (!main.ready()) {
@@ -60,6 +65,14 @@ public class MainTest extends TestCase {
                 main.run();
             } catch (Exception e) {
                 failed = e;
+            }
+        }
+
+        public void stopServer() throws Exception {
+            main.stop();
+            while (main.ready()) {
+                System.out.println("omg!!!!!!!!!!!!!!!!!");
+                sleep(100);
             }
         }
     }

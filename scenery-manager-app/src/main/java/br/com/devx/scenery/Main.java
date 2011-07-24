@@ -7,11 +7,13 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.Handler;
 import br.com.devx.scenery.web.*;
 
+import java.io.IOException;
+
 public class Main {
     private static final Logger log = Logger.getLogger(Main.class);
     private Server server;
 
-    public Main(String[] args) {
+    public Main(String[] args) throws IOException {
         int port = 8080;
         int i = 0;
         TargetApp app = AppsConfig.getInstance().getTargetApp();
@@ -48,6 +50,10 @@ public class Main {
 
     public boolean ready() {
         return server.isStarted();
+    }
+
+    public void stop() throws Exception {
+        server.stop();
     }
 
     public static void main(String[] args) throws Exception {
