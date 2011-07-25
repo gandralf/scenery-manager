@@ -1,11 +1,14 @@
 package br.com.devx.scenery;
 
+import br.com.devx.scenery.web.AppsConfig;
+import br.com.devx.scenery.web.DummyServlet;
+import br.com.devx.scenery.web.SceneryFilter;
+import br.com.devx.scenery.web.TargetApp;
 import org.apache.log4j.Logger;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.FilterHolder;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.Handler;
-import br.com.devx.scenery.web.*;
 
 import java.io.IOException;
 
