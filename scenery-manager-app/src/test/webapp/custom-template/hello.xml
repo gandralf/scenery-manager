@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<buisness-view>
+	<business-logic>
+		<smi>productDefault</smi>
+		<smi>ssoUrl</smi>
+		<smi>socialUrl</smi>
+		<smi>shoppingCartUrl</smi>
+		<smi>resultado=construction.getCurrentAdvertise(data_fetcher., response_object.)</smi>
+	</business-logic>
+	<view encoding="UTF-8">
+		<zone id="container">
+			[#-- Lista de mis avisos --]
+			[#include '/custom-template/hello.ftl' /]
+			[@hello /]
+		</zone>
+	</view>
+</buisness-view>

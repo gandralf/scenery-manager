@@ -1,22 +1,19 @@
 package br.com.devx.scenery.web;
 
-import br.com.devx.scenery.sitemesh.SimpleSitemesh;
+import br.com.devx.scenery.CollectionsHelper;
 import br.com.devx.scenery.SceneryFileException;
 import br.com.devx.scenery.TemplateAdapter;
-import br.com.devx.scenery.CollectionsHelper;
-import br.com.devx.scenery.parser.SceneryParserHelper;
+import br.com.devx.scenery.manager.Scenery;
+import br.com.devx.scenery.manager.SceneryManager;
 import br.com.devx.scenery.manager.SceneryManagerException;
 import br.com.devx.scenery.manager.SceneryManagerResult;
-import br.com.devx.scenery.manager.SceneryManager;
-import br.com.devx.scenery.manager.Scenery;
+import br.com.devx.scenery.parser.SceneryParserHelper;
+import br.com.devx.scenery.sitemesh.SimpleSitemesh;
+import br.com.devx.scenery.web.templates.CustomTemplateHandler;
+import br.com.devx.scenery.web.templates.TemplateHanlerException;
 import org.apache.log4j.Logger;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.app.Velocity;
-import org.apache.velocity.context.Context;
-import org.apache.velocity.exception.MethodInvocationException;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.runtime.RuntimeConstants;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -26,13 +23,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 
-import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapper;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-
 public class SceneryFilter implements Filter {
     private static final Logger s_log = Logger.getLogger(SceneryFilter.class);
+    private CustomTemplateHandler[] templateHandlers;
 
     public void init(FilterConfig config) throws ServletException {
         // Standard template management
@@ -52,6 +45,9 @@ public class SceneryFilter implements Filter {
         } catch (Exception e) {
             throw (IllegalStateException) new IllegalStateException(e.toString()).initCause(e);
         }
+
+        List<CustomTemplateHandler> handlers = AppsConfig.getInstance().getTargetApp().getTemplateHandlers();
+        templateHandlers = handlers.toArray(new CustomTemplateHandler[handlers.size()]);
     }
 
     public void destroy() {
@@ -118,7 +114,7 @@ public class SceneryFilter implements Filter {
         URLConnection urlConnection = url.openConnection();
         Map<String,List<String>> fields = urlConnection.getHeaderFields();
         for (String key: fields.keySet()) {
-            StringBuffer values = new StringBuffer();
+            StringBuilder values = new StringBuilder();
             boolean comma = false;
             for(String value: fields.get(key)) {
                 if (comma) {
@@ -150,11 +146,15 @@ public class SceneryFilter implements Filter {
 
     /**
      * Renders the template content
+     * @param targetPath base template path
      * @param template (relative) path to file
      * @param encoding which encoding to use
+     * @param request web request
      * @param response where to write
      * @param templateAdapter messy data to export
      * @param adapt transform each occurence into string
+     * @throws java.io.IOException on error reading config/template/data files
+     * @throws javax.servlet.ServletException probably on sitemesh issues
      */
     public void handleTemplate(String targetPath, String template, String encoding,
                                HttpServletRequest request, HttpServletResponse response,
@@ -179,83 +179,19 @@ public class SceneryFilter implements Filter {
                 doHandleTemplate(targetPath, sitemesh.getTemplate(), encoding, templateAdapter, adapt, out);
             }
         } catch (SitemeshException e) {
-            new ServletException(e);
+            throw new ServletException(e);
         }
     }
 
     private void doHandleTemplate(String targetPath, String template, String encoding, TemplateAdapter templateAdapter, boolean adapt, PrintWriter out) throws ServletException, IOException {
-        if (template.endsWith(".vm")) {
-            handleVelocityTemplate(targetPath, template, encoding, out, templateAdapter, adapt);
-        } else {
-            handleFreemarkerTemplate(targetPath, template, encoding, out, templateAdapter, adapt);
-        }
-    }
-
-    private void handleFreemarkerTemplate(String targetPath, String template, String encoding,
-                                          PrintWriter out, TemplateAdapter templateAdapter, boolean adapt)
-            throws IOException, ServletException {
-        // Create and adjust the configuration
-        Configuration cfg = new Configuration();
-        cfg.setEncoding(Locale.getDefault(), encoding);
-        cfg.setDirectoryForTemplateLoading(new File(targetPath));
-        cfg.setObjectWrapper(new DefaultObjectWrapper());
-        cfg.setTagSyntax(Configuration.AUTO_DETECT_TAG_SYNTAX);
-
-        // You usually do these for many times in the application life-cycle:
-
-        // Get or create a template
-        Template temp = cfg.getTemplate(template);
-
-        // Create a data-model
-        Map<String, Object> root = new HashMap<String, Object>();
-        for (Object property : templateAdapter.getProperties()) {
-            String name = (String) property;
-            root.put(name, adapt ? templateAdapter.adapt(name) : templateAdapter.get(name));
-        }
-        root.put("templateAdapter", templateAdapter);
-
-        // Merge data-model with template
-        try {
-            temp.process(root, out);
-        } catch (TemplateException e) {
-            throw new ServletException(e);
-        }
-        out.flush();
-
-    }
-
-    private void handleVelocityTemplate(String targetPath, String template, String encoding,
-                                        PrintWriter out, TemplateAdapter templateAdapter, boolean adapt)
-            throws ServletException {
-        Context ctx = new VelocityContext();
-        for (Object property : templateAdapter.getProperties()) {
-            String name = (String) property;
-            ctx.put(name, adapt ? templateAdapter.adapt(name) : templateAdapter.get(name));
-        }
-        ctx.put("templateAdapter", templateAdapter);
-
-        try {
-            VelocityHelper.setupTools(targetPath, ctx);
-            Reader reader;
-            String fileName = new File(targetPath + "/" + template).getCanonicalPath();
-            if (encoding == null) {
-                reader = new FileReader(fileName);
-            } else {
-                reader = new InputStreamReader(new FileInputStream(fileName), encoding);
-            }
+        for (CustomTemplateHandler handler: templateHandlers) {
             try {
-                Velocity.evaluate(ctx, out, "templateAdapter", reader);
-            } finally {
-                reader.close();
+                if (handler.handle(targetPath, template, encoding, out, templateAdapter, adapt)) {
+                    break;
+                }
+            } catch (TemplateHanlerException e) {
+                s_log.error(e);
             }
-        } catch (ParseErrorException e) {
-            throw new ServletException(e);
-        } catch (MethodInvocationException e) {
-            throw new ServletException(e);
-        } catch (ResourceNotFoundException e) {
-            throw new ServletException(e);
-        } catch (IOException e) {
-            throw new ServletException(e);
         }
     }
 

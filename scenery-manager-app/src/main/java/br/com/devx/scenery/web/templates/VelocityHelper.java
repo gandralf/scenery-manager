@@ -1,4 +1,4 @@
-package br.com.devx.scenery.web;
+package br.com.devx.scenery.web.templates;
 
 import org.apache.velocity.context.Context;
 import org.apache.velocity.tools.view.XMLToolboxManager;
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.File;
 import java.util.Map;
 
-class VelocityHelper {
+public class VelocityHelper {
     private static final Logger s_log = Logger.getLogger(VelocityHelper.class);
 
     public static void setupTools(String targetPath, Context ctx) throws IOException {

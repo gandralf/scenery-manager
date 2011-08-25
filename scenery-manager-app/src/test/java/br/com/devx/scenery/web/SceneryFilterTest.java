@@ -1,5 +1,6 @@
 package br.com.devx.scenery.web;
 
+import br.com.devx.scenery.web.chanchito.ChanchitoTemplateHandler;
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
@@ -18,6 +19,7 @@ public class SceneryFilterTest extends HttpUnitTestCase {
         config.reset();
         m_app = config.getTargetApp();
         m_app.setPath("../../test/webapp");
+        m_app.addTemplateHandler(new ChanchitoTemplateHandler());
     }
 
     /**
@@ -42,6 +44,12 @@ public class SceneryFilterTest extends HttpUnitTestCase {
         WebRequest request   = new GetMethodWebRequest( "http://localhost/freemarker.do?test=include" );
         WebResponse response = m_client.getResponse( request );
         assertEquals("Hello, Zeh maneh", response.getText().trim());
+    }
+
+    public void testCustomTemplate() throws IOException, SAXException {
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/custom-template.do" );
+        WebResponse response = m_client.getResponse(request);
+        assertEquals("Hello, Mr. Custom Template", response.getText().trim());
     }
 
     /**

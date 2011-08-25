@@ -16,7 +16,7 @@ public class Main {
     private static final Logger log = Logger.getLogger(Main.class);
     private Server server;
 
-    public Main(String[] args) throws IOException {
+    public Main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         int port = 8080;
         int i = 0;
         TargetApp app = AppsConfig.getInstance().getTargetApp();
@@ -29,6 +29,8 @@ public class Main {
                 app.setPath(args[++i]);
             } else if ("-u".equals(arg)) {
                 app.setUrl(args[++i]);
+            } else if ("-t".equals(arg)) {
+                app.addTemplateHandlers(args[++i]);
             } else if ("/?".equals(arg) || "/h".equals(arg) || "-?".equals(arg) || "-h".equals(arg) || "--help".equals(arg)) {
                 usage();
                 return;
@@ -69,7 +71,8 @@ public class Main {
         System.err.println("Usage: scenery [-l port] [-p path] [-u url]\n" +
                 "Where: \n" +
                 "\t-l\tlistening port. Default = 8080\n" +
-                "\t-p\tpath to target webapp. You can see and config that at config.do\n" +
+                "\t-p\tpath to target webapp.\n" +
+                "\t-t\tcustom template handlers (comma separated)\n" +
                 "\t-u\tURL to be accessed if a file isn't found on the given <path> (see -p). Default = file://<path>"
         );
     }

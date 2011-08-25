@@ -20,16 +20,25 @@ public class MainTest extends TestCase {
         mainThread.stopServer();
     }
 
-    public void testPort() throws InterruptedException, IOException {
+    public void testPort() throws InterruptedException, IOException, ClassNotFoundException, InstantiationException,
+            IllegalAccessException {
         mainThread.start("-l 8000");
         URLConnection urlConnection = new URL("http://localhost:8000/").openConnection();
         urlConnection.getInputStream();
     }
 
-    public void testPath() throws InterruptedException, IOException {
+    public void testPath() throws InterruptedException, IOException, ClassNotFoundException, InstantiationException,
+            IllegalAccessException {
         mainThread.start("-p src/test/webapp");
         String sb = fetch("http://localhost:8080/velocity.do");
         assertTrue(sb.contains("Hello"));
+    }
+
+    public void testCustomTemplateHandler() throws InterruptedException, IOException, ClassNotFoundException,
+            InstantiationException, IllegalAccessException {
+        mainThread.start("-p src/test/webapp -t br.com.devx.scenery.web.chanchito.ChanchitoTemplateHandler");
+        String sb = fetch("http://localhost:8080/custom-template.do");
+        assertTrue(sb.contains("Hello, Mr. Custom Template"));
     }
 
     private String fetch(String url) throws IOException {
@@ -51,7 +60,8 @@ public class MainTest extends TestCase {
             super("server");
         }
 
-        public void start(String args) throws InterruptedException, IOException {
+        public void start(String args) throws InterruptedException, IOException, ClassNotFoundException,
+                IllegalAccessException, InstantiationException {
             main = new Main(args.split("\\s+"));
             start();
             while (!main.ready()) {

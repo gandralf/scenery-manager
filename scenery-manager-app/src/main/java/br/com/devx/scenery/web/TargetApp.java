@@ -1,10 +1,16 @@
 package br.com.devx.scenery.web;
 
+import br.com.devx.scenery.web.templates.CustomTemplateHandler;
+import br.com.devx.scenery.web.templates.FreemarkerTemplateHandler;
 import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * todo check path and URL
@@ -15,9 +21,16 @@ public class TargetApp {
     private String m_path;
     private String m_url;
     private ClassLoader m_classLoader;
+    private List<CustomTemplateHandler> templateHandlers;
 
     public TargetApp(String path) {
         setPath(path);
+        CustomTemplateHandler[] standardTemplateHandlers = new CustomTemplateHandler[] {
+                new FreemarkerTemplateHandler(),
+                new br.com.devx.scenery.web.templates.VelocityTemplateHandler()
+        };
+        templateHandlers = new ArrayList<CustomTemplateHandler>();
+        templateHandlers.addAll(Arrays.asList(standardTemplateHandlers));
     }
 
     public String getPath() {
@@ -76,6 +89,21 @@ public class TargetApp {
             return file.exists() && file.canRead();
         } catch (IOException e) {
             return false;
+        }
+    }
+
+    public List<CustomTemplateHandler> getTemplateHandlers() {
+        return templateHandlers;
+    }
+
+    public void addTemplateHandler(CustomTemplateHandler templateHandler) {
+        templateHandlers.add(templateHandler);
+    }
+
+    public void addTemplateHandlers(String handlers) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        String[] classes = handlers.split(",");
+        for (String className: classes) {
+            addTemplateHandler((CustomTemplateHandler) Class.forName(className).newInstance());
         }
     }
 }
