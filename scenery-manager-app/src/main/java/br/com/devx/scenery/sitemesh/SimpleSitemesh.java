@@ -8,6 +8,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 import org.apache.log4j.Logger;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
@@ -29,8 +30,10 @@ public class SimpleSitemesh implements Sitemesh {
             throw new SitemeshException(filePath, e);
         } catch (SAXException e) {
             throw new SitemeshException(filePath, e);
+        } catch (FileNotFoundException e) {
+            s_log.debug("sitemesh: " + filePath + " not found.");
         } catch (IOException e) {
-            s_log.info("sitemesh: " + filePath + " not found.");
+            s_log.error(e);
         }
     }
 
