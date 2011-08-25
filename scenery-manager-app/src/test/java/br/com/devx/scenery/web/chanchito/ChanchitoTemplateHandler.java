@@ -3,7 +3,7 @@ package br.com.devx.scenery.web.chanchito;
 import br.com.devx.scenery.TemplateAdapter;
 import br.com.devx.scenery.web.templates.CustomTemplateHandler;
 import br.com.devx.scenery.web.templates.FreemarkerTemplateHandler;
-import br.com.devx.scenery.web.templates.TemplateHanlerException;
+import br.com.devx.scenery.web.templates.TemplateHandlerException;
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
@@ -19,7 +19,7 @@ public class ChanchitoTemplateHandler implements CustomTemplateHandler {
 
     public boolean handle(String targetPath, String template, String encoding, PrintWriter out,
                           TemplateAdapter templateAdapter)
-            throws IOException, TemplateHanlerException {
+            throws IOException, TemplateHandlerException {
         boolean result = false;
         if (template.endsWith(".xml")) {
             try {

@@ -10,7 +10,7 @@ import br.com.devx.scenery.manager.SceneryManagerResult;
 import br.com.devx.scenery.parser.SceneryParserHelper;
 import br.com.devx.scenery.sitemesh.SimpleSitemesh;
 import br.com.devx.scenery.web.templates.CustomTemplateHandler;
-import br.com.devx.scenery.web.templates.TemplateHanlerException;
+import br.com.devx.scenery.web.templates.TemplateHandlerException;
 import org.apache.log4j.Logger;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.runtime.RuntimeConstants;
@@ -206,7 +206,7 @@ public class SceneryFilter implements Filter {
                 if (handler.handle(targetPath, template, encoding, out, templateAdapter)) {
                     break;
                 }
-            } catch (TemplateHanlerException e) {
+            } catch (TemplateHandlerException e) {
                 s_log.error(e);
             }
         }

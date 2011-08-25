@@ -11,7 +11,7 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import java.io.*;
 
 public class VelocityTemplateHandler implements CustomTemplateHandler {
-    public boolean handle(String targetPath, String template, String encoding, PrintWriter out, TemplateAdapter templateAdapter) throws IOException, TemplateHanlerException {
+    public boolean handle(String targetPath, String template, String encoding, PrintWriter out, TemplateAdapter templateAdapter) throws IOException, TemplateHandlerException {
         if (template.endsWith(".vm")) {
             doHandle(targetPath, template, encoding, out, templateAdapter);
             return true;
@@ -19,7 +19,7 @@ public class VelocityTemplateHandler implements CustomTemplateHandler {
         return false;
     }
 
-    private void doHandle(String targetPath, String template, String encoding, PrintWriter out, TemplateAdapter templateAdapter) throws IOException, TemplateHanlerException {
+    private void doHandle(String targetPath, String template, String encoding, PrintWriter out, TemplateAdapter templateAdapter) throws IOException, TemplateHandlerException {
         Context ctx = new VelocityContext();
         for (Object property : templateAdapter.getProperties()) {
             String name = (String) property;
@@ -42,13 +42,13 @@ public class VelocityTemplateHandler implements CustomTemplateHandler {
                 reader.close();
             }
         } catch (ParseErrorException e) {
-            throw new TemplateHanlerException(e);
+            throw new TemplateHandlerException(e);
         } catch (MethodInvocationException e) {
-            throw new TemplateHanlerException(e);
+            throw new TemplateHandlerException(e);
         } catch (ResourceNotFoundException e) {
-            throw new TemplateHanlerException(e);
+            throw new TemplateHandlerException(e);
         } catch (IOException e) {
-            throw new TemplateHanlerException(e);
+            throw new TemplateHandlerException(e);
         }
 
     }
