@@ -1,0 +1,8 @@
+#!/bin/sh
+script_dir_link=$(dirname "$(readlink "$0")")
+APPDIR="$script_dir_link/../webapp"
+
+CP="$APPDIR/WEB-INF/classes"
+for i in `ls $APPDIR/WEB-INF/lib` ; do CP="$CP:$APPDIR/WEB-INF/lib/$i" ; done
+
+java -cp $CP br.com.devx.scenery.Main $*

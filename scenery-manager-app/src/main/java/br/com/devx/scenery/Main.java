@@ -48,7 +48,9 @@ public class Main {
     }
 
     public void run() throws Exception {
-        server.start();
+        if (server != null) {
+            server.start();
+        }
     }
 
     public boolean ready() {
