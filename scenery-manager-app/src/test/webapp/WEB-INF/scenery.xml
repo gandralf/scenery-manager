@@ -18,6 +18,7 @@
     </scenery-set>
 
     <scenery-set uri="custom-template.do" template="custom-template/hello.xml" data="custom-template/hello.scn" />
+    <scenery-set uri="custom-template-ex.do" template="custom-template/hello-ex.xml" data="custom-template/hello.scn" />
 
     <!-- sitemesh -->
     <scenery-set uri="sitemesh.do" template="sitemesh/hello.ftl" data="sitemesh/hello.scn" />

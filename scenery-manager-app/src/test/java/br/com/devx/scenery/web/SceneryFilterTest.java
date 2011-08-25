@@ -27,7 +27,7 @@ public class SceneryFilterTest extends HttpUnitTestCase {
      */
     public void testVelocity() throws IOException, SAXException {
         WebRequest request   = new GetMethodWebRequest( "http://localhost/velocity.do" );
-        WebResponse response = m_client.getResponse( request );
+        WebResponse response = m_client.getResponse(request);
         assertEquals("Hello, Zeh maneh", response.getText().trim());
     }
 
@@ -49,7 +49,15 @@ public class SceneryFilterTest extends HttpUnitTestCase {
     public void testCustomTemplate() throws IOException, SAXException {
         WebRequest request   = new GetMethodWebRequest( "http://localhost/custom-template.do" );
         WebResponse response = m_client.getResponse(request);
-        assertEquals("Hello, Mr. Custom Template", response.getText().trim());
+        assertEquals("direct: Hello, Mr. Custom Template", response.getText().trim());
+    }
+
+    public void testCustomTemplateEx() throws IOException, SAXException {
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/custom-template-ex.do" );
+        WebResponse response = m_client.getResponse(request);
+        String text = response.getText();
+        assertTrue(text.trim().contains("<html>"));
+        assertTrue(text.trim().contains("Mr. Custom Template"));
     }
 
     /**

@@ -31,9 +31,11 @@ public class FreemarkerTemplateHandler implements CustomTemplateHandler {
         render(temp, templateAdapter, out, adapt);
     }
 
-    public void handleContent(String targetPath, String content, String encoding, PrintWriter out, TemplateAdapter templateAdapter, boolean adapt) throws IOException, TemplateHanlerException {
+    public void handleContent(String targetPath, String templateName, String content, String encoding,
+                              PrintWriter out, TemplateAdapter templateAdapter, boolean adapt)
+            throws IOException, TemplateHanlerException {
         Configuration cfg = getConfiguration(targetPath, encoding);
-        Template temp = new Template("content", new StringReader(content), cfg, encoding);
+        Template temp = new Template(templateName, new StringReader(content), cfg, encoding);
         render(temp, templateAdapter, out, adapt);
     }
 

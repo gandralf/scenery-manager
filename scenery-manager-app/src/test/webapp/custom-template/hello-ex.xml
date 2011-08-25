@@ -7,8 +7,11 @@
 		<smi>shoppingCartUrl</smi>
 		<smi>resultado=construction.getCurrentAdvertise(data_fetcher., response_object.)</smi>
 	</business-logic>
-	<view encoding="UTF-8" structure="/structures/direct.ftl">
-        [#include 'hello.ftl' /]
-        [@hello /]
+
+	<view encoding="UTF-8">
+		<zone id="container">
+			[#include '/custom-template/hello.ftl' /]
+			[@hello /]
+		</zone>
 	</view>
 </buisness-view>
