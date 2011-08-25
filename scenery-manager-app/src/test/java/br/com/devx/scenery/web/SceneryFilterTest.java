@@ -22,6 +22,13 @@ public class SceneryFilterTest extends HttpUnitTestCase {
         m_app.addTemplateHandler(new ChanchitoTemplateHandler());
     }
 
+
+    public void testIndexHtml() throws IOException, SAXException {
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/" );
+        WebResponse response = m_client.getResponse(request);
+        assertTrue(response.getText().trim().contains("Hello, index.html!"));
+    }
+
     /**
      * Se o cenario estah mapeado, usa-o
      */

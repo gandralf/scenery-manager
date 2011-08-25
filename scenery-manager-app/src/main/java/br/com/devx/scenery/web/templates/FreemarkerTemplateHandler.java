@@ -15,9 +15,9 @@ import java.util.Locale;
 import java.util.Map;
 
 public class FreemarkerTemplateHandler implements CustomTemplateHandler {
-    public boolean handle(String targetPath, String template, String encoding, PrintWriter out, TemplateAdapter templateAdapter, boolean adapt) throws IOException, TemplateHanlerException {
+    public boolean handle(String targetPath, String template, String encoding, PrintWriter out, TemplateAdapter templateAdapter) throws IOException, TemplateHanlerException {
         if (template.endsWith(".ftl")) {
-            handleFile(targetPath, template, encoding, out, templateAdapter, adapt);
+            handleFile(targetPath, template, encoding, out, templateAdapter);
 
             return true;
         }
@@ -25,18 +25,18 @@ public class FreemarkerTemplateHandler implements CustomTemplateHandler {
         return false;
     }
 
-    private void handleFile(String targetPath, String template, String encoding, PrintWriter out, TemplateAdapter templateAdapter, boolean adapt) throws IOException, TemplateHanlerException {
+    private void handleFile(String targetPath, String template, String encoding, PrintWriter out, TemplateAdapter templateAdapter) throws IOException, TemplateHanlerException {
         Configuration cfg = getConfiguration(targetPath, encoding);
         Template temp = cfg.getTemplate(template);
-        render(temp, templateAdapter, out, adapt);
+        render(temp, templateAdapter, out);
     }
 
     public void handleContent(String targetPath, String templateName, String content, String encoding,
-                              PrintWriter out, TemplateAdapter templateAdapter, boolean adapt)
+                              PrintWriter out, TemplateAdapter templateAdapter)
             throws IOException, TemplateHanlerException {
         Configuration cfg = getConfiguration(targetPath, encoding);
         Template temp = new Template(templateName, new StringReader(content), cfg, encoding);
-        render(temp, templateAdapter, out, adapt);
+        render(temp, templateAdapter, out);
     }
 
     private Configuration getConfiguration(String targetPath, String encoding) throws IOException {
@@ -49,12 +49,12 @@ public class FreemarkerTemplateHandler implements CustomTemplateHandler {
         return cfg;
     }
 
-    private void render(Template template, TemplateAdapter values, PrintWriter out, boolean adapt) throws IOException, TemplateHanlerException {
+    private void render(Template template, TemplateAdapter values, PrintWriter out) throws IOException, TemplateHanlerException {
         // Create a data-model
         Map<String, Object> root = new HashMap<String, Object>();
         for (Object property : values.getProperties()) {
             String name = (String) property;
-            root.put(name, adapt ? values.adapt(name) : values.get(name));
+            root.put(name, values.get(name));
         }
         root.put("templateAdapter", values);
 

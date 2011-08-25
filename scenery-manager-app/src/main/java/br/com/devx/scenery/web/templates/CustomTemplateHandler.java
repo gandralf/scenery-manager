@@ -6,6 +6,5 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public interface CustomTemplateHandler {
-    boolean handle(String targetPath, String template, String encoding, PrintWriter out, TemplateAdapter templateAdapter,
-                   boolean adapt) throws IOException, TemplateHanlerException;
+    boolean handle(String targetPath, String template, String encoding, PrintWriter out, TemplateAdapter templateAdapter) throws IOException, TemplateHanlerException;
 }

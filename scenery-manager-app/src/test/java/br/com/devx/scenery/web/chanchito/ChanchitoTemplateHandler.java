@@ -18,7 +18,7 @@ public class ChanchitoTemplateHandler implements CustomTemplateHandler {
     public final Logger log = Logger.getLogger(ChanchitoTemplateHandler.class);
 
     public boolean handle(String targetPath, String template, String encoding, PrintWriter out,
-                          TemplateAdapter templateAdapter, boolean adapt)
+                          TemplateAdapter templateAdapter)
             throws IOException, TemplateHanlerException {
         boolean result = false;
         if (template.endsWith(".xml")) {
@@ -32,7 +32,7 @@ public class ChanchitoTemplateHandler implements CustomTemplateHandler {
                     FreemarkerTemplateHandler freemarkerTemplateHandler = new FreemarkerTemplateHandler();
 
                     freemarkerTemplateHandler.handleContent(targetPath, template, chanchitoFtlContent, encoding,
-                            new PrintWriter(xmlFtlOut), templateAdapter, adapt);
+                            new PrintWriter(xmlFtlOut), templateAdapter);
                     templateAdapter.put("___zones_content", xmlFtlOut.toString().trim());
 
                     Map<String, String> zones = xml.getZones();
@@ -40,12 +40,12 @@ public class ChanchitoTemplateHandler implements CustomTemplateHandler {
                         for(Map.Entry<String, String> entry: zones.entrySet()) {
                             xmlFtlOut = new StringWriter();
                             freemarkerTemplateHandler.handleContent(targetPath, template, entry.getValue(), encoding,
-                                    new PrintWriter(xmlFtlOut), templateAdapter, adapt);
+                                    new PrintWriter(xmlFtlOut), templateAdapter);
                             templateAdapter.put("___zones_" + entry.getKey(), xmlFtlOut.toString());
                         }
                     }
 
-                    freemarkerTemplateHandler.handle(targetPath, structure, encoding, out, templateAdapter, adapt);
+                    freemarkerTemplateHandler.handle(targetPath, structure, encoding, out, templateAdapter);
 
                     result = true;
                 }

@@ -8,23 +8,22 @@ import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 
-import javax.servlet.ServletException;
 import java.io.*;
 
 public class VelocityTemplateHandler implements CustomTemplateHandler {
-    public boolean handle(String targetPath, String template, String encoding, PrintWriter out, TemplateAdapter templateAdapter, boolean adapt) throws IOException, TemplateHanlerException {
+    public boolean handle(String targetPath, String template, String encoding, PrintWriter out, TemplateAdapter templateAdapter) throws IOException, TemplateHanlerException {
         if (template.endsWith(".vm")) {
-            doHandle(targetPath, template, encoding, out, templateAdapter, adapt);
+            doHandle(targetPath, template, encoding, out, templateAdapter);
             return true;
         }
         return false;
     }
 
-    private void doHandle(String targetPath, String template, String encoding, PrintWriter out, TemplateAdapter templateAdapter, boolean adapt) throws IOException, TemplateHanlerException {
+    private void doHandle(String targetPath, String template, String encoding, PrintWriter out, TemplateAdapter templateAdapter) throws IOException, TemplateHanlerException {
         Context ctx = new VelocityContext();
         for (Object property : templateAdapter.getProperties()) {
             String name = (String) property;
-            ctx.put(name, adapt ? templateAdapter.adapt(name) : templateAdapter.get(name));
+            ctx.put(name, templateAdapter.get(name));
         }
         ctx.put("templateAdapter", templateAdapter);
 

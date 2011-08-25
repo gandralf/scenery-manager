@@ -19,6 +19,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
@@ -109,7 +110,8 @@ public class SceneryFilter implements Filter {
 
     private void redirect(TargetApp app, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        URL url = new URL(app.getUrl() + request.getRequestURI());
+        URL url = buildUrl(app, request);
+
         s_log.debug("Redirecting to " + url);
         URLConnection urlConnection = url.openConnection();
         Map<String,List<String>> fields = urlConnection.getHeaderFields();
@@ -142,6 +144,21 @@ public class SceneryFilter implements Filter {
         } finally {
             in.close();
         }
+    }
+
+    private URL buildUrl(TargetApp app, HttpServletRequest request) throws MalformedURLException {
+        URL url = new URL(app.getUrl() + request.getRequestURI());
+        if (url.getProtocol().equals("file")) {
+            File file = new File(url.getPath());
+            if (file.exists() && file.isDirectory()) {
+                File indexHtml = new File(file, "index.html");
+                if (indexHtml.exists()) {
+                    s_log.debug("index.html found");
+                    url = indexHtml.toURI().toURL();
+                }
+            }
+        }
+        return url;
     }
 
     /**
@@ -186,7 +203,7 @@ public class SceneryFilter implements Filter {
     private void doHandleTemplate(String targetPath, String template, String encoding, TemplateAdapter templateAdapter, boolean adapt, PrintWriter out) throws ServletException, IOException {
         for (CustomTemplateHandler handler: templateHandlers) {
             try {
-                if (handler.handle(targetPath, template, encoding, out, templateAdapter, adapt)) {
+                if (handler.handle(targetPath, template, encoding, out, templateAdapter)) {
                     break;
                 }
             } catch (TemplateHanlerException e) {
