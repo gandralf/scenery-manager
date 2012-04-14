@@ -1,0 +1,8 @@
+user = {
+    name = "John Doe"
+};
+
+app = {
+    version = 1.2;
+    updatedAt = 2010-02-20;
+};

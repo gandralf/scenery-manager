@@ -12,7 +12,9 @@ import br.com.devx.scenery.sitemesh.SimpleSitemesh;
 import br.com.devx.scenery.web.templates.CustomTemplateHandler;
 import br.com.devx.scenery.web.templates.TemplateHandlerException;
 import org.apache.log4j.Logger;
+import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.apache.velocity.context.Context;
 import org.apache.velocity.runtime.RuntimeConstants;
 
 import javax.servlet.*;
@@ -31,9 +33,7 @@ public class SceneryFilter implements Filter {
     public void init(FilterConfig config) throws ServletException {
         // Standard template management
         Properties properties = new Properties();
-        properties.put("resource.loader", "file, targetApp");
-        String webPath = config.getServletContext().getRealPath("/");
-        properties.put("file.resource.loader.path", webPath + ", .");
+        properties.put("resource.loader", "targetApp");
         properties.put("targetApp.resource.loader.class", TargetResourceLoader.class.getName());
 
         properties.setProperty( RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS,
@@ -79,10 +79,20 @@ public class SceneryFilter implements Filter {
             }
             redirect(targetApp, request, response);
         } catch (SceneryFileException e) { // Scn file error
-            handleTemplate(".", "errorReport.vm", "iso-8859-1", request, response, error(e), false);
+            showSyntaxError(response, e);
         } catch (SceneryManagerException e) { // Wtf error
             throw new ServletException(e);
         }
+    }
+
+    private void showSyntaxError(HttpServletResponse response, SceneryFileException e) throws IOException, ServletException {
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+
+        Context ctx = new VelocityContext();
+        error(ctx, e);
+        Velocity.evaluate(ctx, out, "templateAdapter",
+                new InputStreamReader(getClass().getResourceAsStream("/errorReport.vm")));
     }
 
     public static SceneryManagerResult querySceneryManager(HttpServletRequest request, String sceneryXml,
@@ -212,11 +222,10 @@ public class SceneryFilter implements Filter {
         }
     }
 
-    private TemplateAdapter error(SceneryFileException e) throws IOException, ServletException {
+    private void error(Context result, SceneryFileException e) throws IOException, ServletException {
         s_log.info("Error on " + e.getFileName());
         FileReader fileReader = new FileReader(e.getFileName());
         try {
-            TemplateAdapter result = new TemplateAdapter();
             BufferedReader reader = new BufferedReader(fileReader);
             String line;
             ArrayList<String> lines = new ArrayList<String>();
@@ -242,8 +251,6 @@ public class SceneryFilter implements Filter {
             result.put("errorBeginColumn", new Integer(e.getBeginColumn()));
             result.put("errorEndColumn", new Integer(e.getEndColumn()));
             result.put("lines", lines);
-
-            return result;
         } finally {
             fileReader.close();
         }

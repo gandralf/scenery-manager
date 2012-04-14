@@ -1,0 +1,25 @@
+<html>
+<head>
+    <title>$message</title>
+<body>
+<h2>Scenery data file error</h2>
+$message
+<hr>
+#set($count = 1)
+<span style="font-family: monospace;">
+<table border="0">
+    #foreach($line in $lines)
+    <tr>
+        <td>
+            <span style="color: gray; font-size: smaller; ">$count</span>
+        </td>
+        <td>
+            <pre>$line</pre>
+        </td>
+    </tr>
+    #set($count = $count + 1)
+    #end
+</table>
+</span>
+</body>
+</html>
