@@ -71,12 +71,12 @@ public class SceneryFilterTest extends HttpUnitTestCase {
      * senao, aciona o outro site
      */
     public void testRedirect() throws IOException, SAXException {
-        m_app.setUrl("http://www.google.com/");
+        m_app.setUrl("http://gandralf.github.com");
 
-        WebRequest request   = new GetMethodWebRequest( "http://localhost/intl/en/about.html" );
+        WebRequest request   = new GetMethodWebRequest( "http://localhost/scenery-manager" );
         WebResponse response = m_client.getResponse( request );
 
-        assertTrue(response.getText().toLowerCase().contains("our products"));
+        assertTrue(response.getText().toLowerCase().contains("scenery manager"));
     }
 
     /**
