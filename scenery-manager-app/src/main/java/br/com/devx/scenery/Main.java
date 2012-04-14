@@ -68,7 +68,7 @@ public class Main {
     }
 
     private static void usage() {
-        System.err.println("Usage: scenery [-l port] [-p path] [-u url]\n" +
+        System.err.println("Usage: scn [-l port] [-p path] [-u url]\n" +
                 "Where: \n" +
                 "\t-l\tlistening port. Default = 8080\n" +
                 "\t-p\tpath to target webapp.\n" +
