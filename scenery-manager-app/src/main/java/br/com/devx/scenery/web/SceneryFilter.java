@@ -192,25 +192,25 @@ public class SceneryFilter implements Filter {
             PrintWriter out = response.getWriter();
             Sitemesh sitemesh = new SimpleSitemesh(targetPath, request.getRequestURI());
             if (!sitemesh.isActive()) {
-                doHandleTemplate(targetPath, template, encoding, templateAdapter, adapt, out);
+                doHandleTemplate(targetPath, template, encoding, templateAdapter, out);
             } else {
                 StringWriter sout = new StringWriter();
                 templateAdapter.put("base", new URL(new URL(request.getRequestURL().toString()), "/" + request.getContextPath()).toString());
                 // Write the decorator to a memory out
-                doHandleTemplate(targetPath, template, encoding, templateAdapter, adapt, new PrintWriter(sout));
+                doHandleTemplate(targetPath, template, encoding, templateAdapter, new PrintWriter(sout));
                 // and decorate it
                 sitemesh.decorate(sout.toString());
 
                 templateAdapter.put("head", sitemesh.get("head"));
                 templateAdapter.put("body", sitemesh.get("body"));
-                doHandleTemplate(targetPath, sitemesh.getTemplate(), encoding, templateAdapter, adapt, out);
+                doHandleTemplate(targetPath, sitemesh.getTemplate(), encoding, templateAdapter, out);
             }
         } catch (SitemeshException e) {
             throw new ServletException(e);
         }
     }
 
-    private void doHandleTemplate(String targetPath, String template, String encoding, TemplateAdapter templateAdapter, boolean adapt, PrintWriter out) throws ServletException, IOException {
+    private void doHandleTemplate(String targetPath, String template, String encoding, TemplateAdapter templateAdapter, PrintWriter out) throws ServletException, IOException {
         for (CustomTemplateHandler handler: templateHandlers) {
             try {
                 if (handler.handle(targetPath, template, encoding, out, templateAdapter)) {
@@ -239,7 +239,7 @@ public class SceneryFilter implements Filter {
                     String gambi = "<span style=\"color:red\">";
                     line = new StringBuffer(line)
                             .insert(errorBeginColumn - 1, gambi)
-                            .insert(errorEndColumn - 1 + gambi.length(), "</span>")
+                            .insert(errorEndColumn + gambi.length(), "</span>")
                             .toString();
                 }
                 lines.add(line);
@@ -247,9 +247,9 @@ public class SceneryFilter implements Filter {
             }
 
             result.put("message", e.getMessage());
-            result.put("errorLine", new Integer(errorLine));
-            result.put("errorBeginColumn", new Integer(e.getBeginColumn()));
-            result.put("errorEndColumn", new Integer(e.getEndColumn()));
+            result.put("errorLine", errorLine);
+            result.put("errorBeginColumn", e.getBeginColumn());
+            result.put("errorEndColumn", e.getEndColumn());
             result.put("lines", lines);
         } finally {
             fileReader.close();

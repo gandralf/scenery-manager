@@ -13,11 +13,12 @@ import org.mortbay.jetty.Handler;
 import java.io.IOException;
 
 public class Main {
+    private static final int DEFAULT_PORT = 9090;
     private static final Logger log = Logger.getLogger(Main.class);
     private Server server;
 
     public Main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-        int port = 8080;
+        int port = DEFAULT_PORT;
         int i = 0;
         TargetApp app = AppsConfig.getInstance().getTargetApp();
 
@@ -44,7 +45,7 @@ public class Main {
 
         log.info("Server ready. Access http://localhost:" + port + "/ to browse files at " + app.getPath());
         server = new Server(port);
-        Context root = new Context(server,"/", Context.SESSIONS);
+        Context root = new Context(server, "/", Context.SESSIONS);
         root.addFilter(new FilterHolder(new SceneryFilter()), "/*", Handler.DEFAULT);
         root.addServlet(DummyServlet.class, "/*"); // Without a servlet, the filter won't work
     }
@@ -70,7 +71,7 @@ public class Main {
     private static void usage() {
         System.err.println("Usage: scn [-l port] [-p path] [-u url]\n" +
                 "Where: \n" +
-                "\t-l\tlistening port. Default = 8080\n" +
+                "\t-l\tlistening port. Default = " + DEFAULT_PORT + "\n" +
                 "\t-p\tpath to target webapp.\n" +
                 "\t-t\tcustom template handlers (comma separated)\n" +
                 "\t-u\tURL to be accessed if a file isn't found on the given <path> (see -p). Default = file://<path>"

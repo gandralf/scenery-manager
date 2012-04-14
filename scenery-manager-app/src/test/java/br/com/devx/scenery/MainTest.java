@@ -30,14 +30,14 @@ public class MainTest extends TestCase {
     public void testPath() throws InterruptedException, IOException, ClassNotFoundException, InstantiationException,
             IllegalAccessException {
         mainThread.start("-p src/test/webapp");
-        String sb = fetch("http://localhost:8080/velocity.do");
+        String sb = fetch("http://localhost:9090/velocity.do");
         assertTrue(sb.contains("Hello"));
     }
 
     public void testCustomTemplateHandler() throws InterruptedException, IOException, ClassNotFoundException,
             InstantiationException, IllegalAccessException {
         mainThread.start("-p src/test/webapp -t br.com.devx.scenery.web.chanchito.ChanchitoTemplateHandler");
-        String sb = fetch("http://localhost:8080/custom-template.do");
+        String sb = fetch("http://localhost:9090/custom-template.do");
         assertTrue(sb.contains("Hello, Mr. Custom Template"));
     }
 

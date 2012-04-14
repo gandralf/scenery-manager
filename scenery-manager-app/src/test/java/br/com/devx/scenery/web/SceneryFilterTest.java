@@ -62,7 +62,10 @@ public class SceneryFilterTest extends HttpUnitTestCase {
     }
 
     public void testError() throws IOException, SAXException {
-        pageShouldContains("/velocity.do?error=true", "<pre>     \"I'll forget a comma here\"</pre>");
+        pageShouldContains("/velocity.do?error=true",
+                "<pre>     \"I'll forget a comma here\"</pre>",
+                ">\"nice",
+                "\"</span>");
     }
 
     public void testVelocityMacro() throws IOException, SAXException {
