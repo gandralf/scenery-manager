@@ -2,22 +2,18 @@ package br.com.devx.scenery.web;
 
 import br.com.devx.scenery.web.templates.CustomTemplateHandler;
 import br.com.devx.scenery.web.templates.FreemarkerTemplateHandler;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * todo check path and URL
  */
 public class TargetApp {
-    private static final Logger s_log = Logger.getLogger(TargetApp.class);
-
     private String m_path;
     private String m_url;
     private ClassLoader m_classLoader;
@@ -75,7 +71,7 @@ public class TargetApp {
         return m_url;
     }
 
-    public void setUrl(String url) {
+    public void setAlternativeUrl(String url) {
         m_url = url;
     }
 

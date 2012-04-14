@@ -29,7 +29,7 @@ public class Main {
             } else if ("-p".equals(arg)) {
                 app.setPath(args[++i]);
             } else if ("-u".equals(arg)) {
-                app.setUrl(args[++i]);
+                app.setAlternativeUrl(args[++i]);
             } else if ("-t".equals(arg)) {
                 app.addTemplateHandlers(args[++i]);
             } else if ("/?".equals(arg) || "/h".equals(arg) || "-?".equals(arg) || "-h".equals(arg) || "--help".equals(arg)) {

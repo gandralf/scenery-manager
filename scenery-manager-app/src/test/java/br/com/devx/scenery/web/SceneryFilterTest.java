@@ -53,11 +53,8 @@ public class SceneryFilterTest extends HttpUnitTestCase {
         pageShouldContains("/custom-template-ex.do", "<html>", "Mr. Custom Template");
     }
 
-    /**
-     * senao, aciona o outro site
-     */
     public void testRedirect() throws IOException, SAXException {
-        m_app.setUrl("http://gandralf.github.com");
+        m_app.setAlternativeUrl("http://gandralf.github.com");
         pageShouldContains("/scenery-manager", "scenery manager");
     }
 
