@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Scenery-manager : Build and test just your view" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Scenery-manager</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/gandralf/scenery-manager">Fork Me on GitHub</a>
+
+          <h1 id="project_title">Scenery-manager</h1>
+          <h2 id="project_tagline">Build and test just your view</h2>
+
+          <section id="downloads">
+            <a class="zip_download_link" href="https://github.com/gandralf/scenery-manager/zipball/master">Download this project as a .zip file</a>
+            <a class="tar_download_link" href="https://github.com/gandralf/scenery-manager/tarball/master">Download this project as a tar.gz file</a>
+          </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>Scenery Manager</h1>
+
+<p>To develop a template (jsp, velocity, free maker...), you need all-that-messy-server-side stuff up and running. You have to mess with maven, libraries, databases, endless configuration stuff, right?</p>
+
+<p>That means that you are quite dependent. The more dependent, the less freedom.</p>
+
+<p>But, what if we could get the server-side behavior even before it’s done/configured/etc? It would break the dependency!</p>
+
+<h3>Emulating the server side behaviour in a proper MVC</h3>
+
+<p>A view (usually a jsp/velocity/free marker/... template) gets some data/objects and displays its content, like</p>
+
+<pre><code>...
+&lt;h2&gt;Welcome ${user.name}
+...
+</code></pre>
+
+<p>To make it work, you just need to:</p>
+
+<ol>
+<li>Write a fake data (file) with the value of all those variables (like user.name). This usually stays in .scn (scenery) files.</li>
+<li>Merge both files (template and data):
+2.1. Define the URL mapping. Each URL combines a template and a scenery data file. Like: for "/home" URL, merges "/home/index.ftl" template and "/home/john.scn" fake data file. This is done in a very simple configuration file in "WEB-INF/scenery.xml"
+2.2. Run the scenery manager app and tell it where your webapp is
+2.3. Access http://localhost/home to see what happens with your template when it receves such data.</li>
+</ol><h2>Templates</h2>
+
+<p>Scenery manager supports JSP, velocity and freemarker templates. Use includes, macros, whatever.
+Just don't do and heavy logic method calls/controller stuff there.
+This means that if your template is kind of dumb and just shows information, you are good to go.</p>
+
+<p>For our example, let's asume "/home/index.ftl" (free marker):</p>
+
+<pre><code>...
+&lt;#if user??&gt;
+    Welcome back, ${user.name}.
+&lt;#else&gt;
+    Have an account? &lt;a href="/auth/signin"&gt;Sign in&lt;/a&gt;. Or &lt;a href="/auth/signup"&gt;sign up&lt;/a&gt;
+&lt;/#if&gt;
+...
+&lt;div class="footer"&gt;
+    Hello app, version ${app.version}. Updated at ${app.updatedAt ?datetime}
+&lt;/div&gt;
+</code></pre>
+
+<h2>Fake data files, aka .scn</h2>
+
+<p>You can define the data in a syntax very similar to json. For our example, "/home/john.scn":</p>
+
+<pre><code>user = {
+    name = "John Doe";
+};
+
+app = {
+    version = 1.2;
+    updatedAt = 2010-02-20;
+};
+</code></pre>
+
+<p>Let's define another scenery ("/home/anonimous.scn"), for someone that isn't logged in, just with the app values:</p>
+
+<pre><code>app = {
+    version = 1.2;
+    updatedAt = 2010-02-20;
+};
+</code></pre>
+
+<p>I know I should use a better syntax, like json itself or haml. But, hay! I did it back in 2002!</p>
+
+<h2>URL mapping file, aka 'WEB-INF/scenery.xml'</h2>
+
+<p>The first scenery (logged-in user), will be available in "/john" URI. The second one (not logged in), in "/home".</p>
+
+<pre><code>&lt;scenery-manager&gt;
+    &lt;scenery-set uri="/john" template="/home/index.ftl" data="/home/john.scn" /&gt;
+    &lt;scenery-set uri="/home" template="/home/index.ftl" data="/home/anonymous.scn" /&gt;
+&lt;/scenery-manager&gt;
+</code></pre>
+
+<h2>Running scenery manager app</h2>
+
+<p>Supose that the demo app is located at $HOME/hello-world, and the wabapp source in ./src/main/webapp. Just run:</p>
+
+<pre><code>cd &lt;scenery-manager-app directory&gt;
+./run.sh -p $HOME/hello-world/src/main/webapp
+</code></pre>
+
+<h1>Summing up</h1>
+
+<p>Scenery manager assigns URLs to a fake data file and a template. And when you access that URL, it “merges” both files and shows you the result.</p>
+
+<ul>
+<li>Develop and test the view with freedom</li>
+<li>Stress different scenarios</li>
+<li>Minimum overhead</li>
+<li>Useful even when the server-side component is done</li>
+<li>Not a prototype solution, but can be used so</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Scenery-manager maintained by <a href="https://github.com/gandralf">gandralf</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
