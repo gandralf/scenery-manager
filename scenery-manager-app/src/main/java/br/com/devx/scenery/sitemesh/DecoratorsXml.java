@@ -95,7 +95,7 @@ class DecoratorsXml implements ContentHandler {
         } else if ("excludes".equals(qName)) {
             m_parsing = Parsing.excludes;
         } else {
-            s_log.warn("Ignoring: " + qName);
+            s_log.debug("Ignoring: " + qName);
         }
     }
 
