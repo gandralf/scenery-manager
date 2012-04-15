@@ -11,6 +11,26 @@
         </init-param>
     </servlet>
 
+    <servlet>
+        <servlet-name>sitemesh-freemarker</servlet-name>
+        <servlet-class>com.opensymphony.module.sitemesh.freemarker.FreemarkerDecoratorServlet</servlet-class>
+        <!-- or freemarker.ext.servlet.FreemarkerServlet -->
+        <init-param>
+            <param-name>TemplatePath</param-name>
+            <param-value>/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>default_encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>auto_import</param-name>
+            <param-value>freemarker/macros.ftl as html</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+
     <servlet-mapping>
         <servlet-name>HelloServlet</servlet-name>
         <url-pattern>hello.do</url-pattern>

@@ -8,6 +8,16 @@
         <servlet-class>org.apache.velocity.tools.view.servlet.VelocityViewServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>freemarker</servlet-name>
+        <servlet-class>freemarker.ext.servlet.FreemarkerServlet</servlet-class>
+        <init-param>
+            <param-name>auto_import</param-name>
+            <param-value>html.ftl as html</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>SceneryServlet</servlet-name>
         <url-pattern>*.do</url-pattern>

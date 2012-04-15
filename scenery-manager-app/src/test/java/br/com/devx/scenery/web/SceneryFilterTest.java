@@ -45,8 +45,8 @@ public class SceneryFilterTest extends HttpUnitTestCase {
         pageShouldContains("/freemarker.do?test=include", "Hello, Zeh maneh");
     }
 
-    public void _testFreemarkerMacro() throws IOException, SAXException {
-        pageShouldContains("/freemarker.do?test=macro", "<script javascript");
+    public void testFreemarkerMacro() throws IOException, SAXException {
+        pageShouldContains("/freemarker.do?test=macro", "<script type=");
     }
 
     public void testCustomTemplate() throws IOException, SAXException {

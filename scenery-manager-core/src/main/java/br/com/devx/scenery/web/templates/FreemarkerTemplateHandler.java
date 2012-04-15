@@ -1,11 +1,11 @@
 package br.com.devx.scenery.web.templates;
 
 import br.com.devx.scenery.TemplateAdapter;
+import freemarker.core.ParseException;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import freemarker.core.ParseException;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,25 +33,37 @@ public class FreemarkerTemplateHandler implements CustomTemplateHandler {
             render(temp, templateAdapter, out);
         } catch (ParseException e) {
             throw new TemplateHandlerException(targetPath + "/" + template, e.getLineNumber(), e.getColumnNumber(), e);
+        } catch (TemplateException e) {
+            throw new TemplateHandlerException(e);
         }
     }
 
     public void handleContent(String targetPath, String templateName, String content, String encoding,
                               PrintWriter out, TemplateAdapter templateAdapter)
             throws IOException, TemplateHandlerException {
-        Configuration cfg = getConfiguration(targetPath, encoding);
-        Template temp = new Template(templateName, new StringReader(content), cfg, encoding);
-        render(temp, templateAdapter, out);
+        try {
+            Configuration cfg = getConfiguration(targetPath, encoding);
+            Template temp = new Template(templateName, new StringReader(content), cfg, encoding);
+            render(temp, templateAdapter, out);
+        } catch (TemplateException e) {
+            throw new TemplateHandlerException(e);
+        }
     }
 
-    private Configuration getConfiguration(String targetPath, String encoding) throws IOException {
+    private Configuration getConfiguration(String targetPath, String encoding) throws IOException, TemplateException {
         // Create and adjust the configuration
         Configuration cfg = new Configuration();
         cfg.setEncoding(Locale.getDefault(), encoding);
         cfg.setDirectoryForTemplateLoading(new File(targetPath));
         cfg.setObjectWrapper(new DefaultObjectWrapper());
         cfg.setTagSyntax(Configuration.AUTO_DETECT_TAG_SYNTAX);
+        setSettingsWithInitParam(cfg, targetPath, "auto_import");
+
         return cfg;
+    }
+
+    private void setSettingsWithInitParam(Configuration cfg, String targetPath, String initParam) throws TemplateException {
+        cfg.setSetting(initParam, new FreemarkerOptions(targetPath).getInitParam(initParam));
     }
 
     private void render(Template template, TemplateAdapter values, PrintWriter out) throws IOException, TemplateHandlerException {
@@ -71,4 +83,5 @@ public class FreemarkerTemplateHandler implements CustomTemplateHandler {
         }
         out.flush();
     }
+
 }
