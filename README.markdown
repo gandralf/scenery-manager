@@ -32,16 +32,16 @@ This means that if your template is kind of dumb and just shows information, you
 
 For our example, let's asume "/home/index.ftl" (freemarker):
 ```ftl
-    ...
-    <#if user??>
-        Welcome back, ${user.name}.
-    <#else>
-        Have an account? <a href="/auth/signin">Sign in</a>. Or <a href="/auth/signup">sign up</a>
-    </#if>
-    ...
-    <div class="footer">
-        Hello app, version ${app.version}. Updated at ${app.updatedAt ?datetime}
-    </div>
+...
+<#if user??>
+    Welcome back, ${user.name}.
+<#else>
+    Have an account? <a href="/auth/signin">Sign in</a>. Or <a href="/auth/signup">sign up</a>
+</#if>
+...
+<div class="footer">
+    Hello app, version ${app.version}. Updated at ${app.updatedAt ?datetime}
+</div>
 ```
 
 Fake data files: .scn files
@@ -94,10 +94,10 @@ URL mapping file, aka 'WEB-INF/scenery.xml'
 -------------------------------------------
 The first scenery (logged-in user), will be available in "/john" URI. The second one (not logged in), in "/home".
 ```xml
-    <scenery-manager>
-        <scenery-set uri="/john" template="/home/index.ftl" data="/home/john.scn" />
-        <scenery-set uri="/home" template="/home/index.ftl" data="/home/anonymous.scn" />
-    </scenery-manager>
+<scenery-manager>
+    <scenery-set uri="/john" template="/home/index.ftl" data="/home/john.scn" />
+    <scenery-set uri="/home" template="/home/index.ftl" data="/home/anonymous.scn" />
+</scenery-manager>
 ```
 Running scenery manager app
 ---------------------------
