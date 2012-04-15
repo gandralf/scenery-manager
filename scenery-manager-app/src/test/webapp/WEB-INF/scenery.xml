@@ -3,6 +3,7 @@
 <scenery-manager>
     <scenery-set uri="velocity.do" template="velocity/hello.vm" data="velocity/hello.scn">
         <data description="Just an error" test="error=true" file="velocity/hello-error.scn" />
+        <template description="Template error" test="test=vm-error" file="velocity/vm-error.vm" />
     </scenery-set>
 
     <scenery-set uri="tool.do" template="velocity/tool.vm" data="velocity/tool.scn" />
@@ -15,6 +16,8 @@
     <!-- freemarker -->
     <scenery-set uri="freemarker.do" template="freemarker/hello.ftl" data="velocity/hello.scn">
         <template test="test=include" file="freemarker/parse.ftl" />
+        <template test="test=macro" file="freemarker/use-macro.ftl" />
+        <template test="test=ftl-error" file="freemarker/ftl-error.ftl" />
     </scenery-set>
 
     <scenery-set uri="custom-template.do" template="custom-template/hello.xml" data="custom-template/hello.scn" />

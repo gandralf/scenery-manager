@@ -1,12 +1,12 @@
 <html>
 <head>
-    <title>$message</title>
+    <title>Scenery data file or template error</title>
 <body>
-<h2>Scenery data file error</h2>
-$message
+<h2>Scenery data file or template error</h2>
+<pre>$message</pre>
 <hr>
 #set($count = 1)
-<span style="font-family: monospace;">
+
 <table border="0">
     #foreach($line in $lines)
     <tr>
@@ -20,6 +20,6 @@ $message
     #set($count = $count + 1)
     #end
 </table>
-</span>
+
 </body>
 </html>

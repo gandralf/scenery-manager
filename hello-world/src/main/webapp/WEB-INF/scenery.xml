@@ -4,4 +4,6 @@
     <scenery-set uri="/john" template="/home/index.ftl" data="/home/john.scn" />
     <scenery-set uri="/home" template="/home/index.ftl" data="/home/anonymous.scn" />
     <scenery-set uri="/scn-error" template="/home/index.ftl" data="/home/scn-error.scn" />
+    <scenery-set uri="/ftl-error" template="/home/ftl-error.ftl" data="/home/john.scn" />
+    <scenery-set uri="/vm-error" template="/home/vm-error.vm" data="/home/john.scn" />
 </scenery-manager>

@@ -5,6 +5,7 @@ import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import freemarker.core.ParseException;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,9 +27,13 @@ public class FreemarkerTemplateHandler implements CustomTemplateHandler {
     }
 
     private void handleFile(String targetPath, String template, String encoding, PrintWriter out, TemplateAdapter templateAdapter) throws IOException, TemplateHandlerException {
-        Configuration cfg = getConfiguration(targetPath, encoding);
-        Template temp = cfg.getTemplate(template);
-        render(temp, templateAdapter, out);
+        try {
+            Configuration cfg = getConfiguration(targetPath, encoding);
+            Template temp = cfg.getTemplate(template);
+            render(temp, templateAdapter, out);
+        } catch (ParseException e) {
+            throw new TemplateHandlerException(targetPath + "/" + template, e.getLineNumber(), e.getColumnNumber(), e);
+        }
     }
 
     public void handleContent(String targetPath, String templateName, String content, String encoding,

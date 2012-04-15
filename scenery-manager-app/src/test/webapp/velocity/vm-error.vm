@@ -1,0 +1,5 @@
+#if ($name
+Hello, $name
+#end
+<br />
+How do you do?

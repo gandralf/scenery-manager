@@ -27,10 +27,10 @@ public class VelocityTemplateHandler implements CustomTemplateHandler {
         }
         ctx.put("templateAdapter", templateAdapter);
 
+        String fileName = new File(targetPath + "/" + template).getCanonicalPath();
         try {
             VelocityHelper.setupTools(targetPath, ctx);
             Reader reader;
-            String fileName = new File(targetPath + "/" + template).getCanonicalPath();
             if (encoding == null) {
                 reader = new FileReader(fileName);
             } else {
@@ -42,9 +42,9 @@ public class VelocityTemplateHandler implements CustomTemplateHandler {
                 reader.close();
             }
         } catch (ParseErrorException e) {
-            throw new TemplateHandlerException(e);
+            throw new TemplateHandlerException(fileName, e.getLineNumber(), e.getColumnNumber(), e);
         } catch (MethodInvocationException e) {
-            throw new TemplateHandlerException(e);
+            throw new TemplateHandlerException(fileName, e.getLineNumber(), e.getColumnNumber(), e);
         } catch (ResourceNotFoundException e) {
             throw new TemplateHandlerException(e);
         } catch (IOException e) {

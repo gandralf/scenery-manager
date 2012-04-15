@@ -45,6 +45,10 @@ public class SceneryFilterTest extends HttpUnitTestCase {
         pageShouldContains("/freemarker.do?test=include", "Hello, Zeh maneh");
     }
 
+    public void _testFreemarkerMacro() throws IOException, SAXException {
+        pageShouldContains("/freemarker.do?test=macro", "<script javascript");
+    }
+
     public void testCustomTemplate() throws IOException, SAXException {
         pageShouldContains("/custom-template.do", "direct: Hello, Mr. Custom Template");
     }
@@ -58,11 +62,18 @@ public class SceneryFilterTest extends HttpUnitTestCase {
         pageShouldContains("/scenery-manager", "scenery manager");
     }
 
-    public void testError() throws IOException, SAXException {
+    public void testSceneryError() throws IOException, SAXException {
         pageShouldContains("/velocity.do?error=true",
-                "<pre>     \"I'll forget a comma here\"</pre>",
-                ">\"nice",
-                "\"</span>");
+                "<pre>     &quot;i'll forget a comma here&quot;</pre>",
+                "&quot;nice. the last one doesn't need that&quot;</span>");
+    }
+
+    public void testFreemarkerTemplateError() throws IOException, SAXException {
+        pageShouldContains("/freemarker.do?test=ftl-error", "How do you do?", "&lt;");
+    }
+
+    public void testVelocityTemplateError() throws IOException, SAXException {
+        pageShouldContains("/velocity.do?test=vm-error", "How do you do?", "&lt;");
     }
 
     public void testVelocityMacro() throws IOException, SAXException {

@@ -26,6 +26,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
+
 public class SceneryFilter implements Filter {
     private static final Logger s_log = Logger.getLogger(SceneryFilter.class);
     private CustomTemplateHandler[] templateHandlers;
@@ -57,6 +59,7 @@ public class SceneryFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
+        OutputStream out = response.getOutputStream();
 
         TargetApp targetApp = AppsConfig.getInstance().getTargetApp();
         try {
@@ -66,8 +69,8 @@ public class SceneryFilter implements Filter {
                         targetApp.getPath(),
                         targetApp.getClassLoader());
                 String template = smr.getScenery().getTemplate();
-                handleTemplate(targetApp.getPath(), template, smr.getEncoding(), request, response,
-                        smr.getTemplateAdapter(), smr.isAdapt());
+                handleTemplate(targetApp.getPath(), template, smr.getEncoding(), request, new PrintWriter(out),
+                        smr.getTemplateAdapter());
             } else {
                 s_log.warn("Target app doesn't have a scenery.xml file");
                 redirect(targetApp, request, response);
@@ -79,20 +82,30 @@ public class SceneryFilter implements Filter {
             }
             redirect(targetApp, request, response);
         } catch (SceneryFileException e) { // Scn file error
-            showSyntaxError(response, e);
+            showSceneryError(out, e);
+        } catch (TemplateHandlerException e) { // Scn file error
+            showTemplateError(out, e);
         } catch (SceneryManagerException e) { // Wtf error
             throw new ServletException(e);
         }
     }
 
-    private void showSyntaxError(HttpServletResponse response, SceneryFileException e) throws IOException, ServletException {
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
+    private void showSceneryError(OutputStream sout, SceneryFileException e) throws IOException, ServletException {
+        showError(sout, e.getFileName(), e.getMessage(), e.getLine(), e.getBeginColumn());
+    }
 
+    private void showTemplateError(OutputStream sout, TemplateHandlerException e) throws IOException {
+        showError(sout, e.getFileName(), e.getMessage(), e.getLineNumber(), e.getColumnNumber());
+    }
+
+    private void showError(OutputStream sout, String fileName, String message, int line, int beginColumn) throws IOException {
+        PrintWriter out = new PrintWriter(sout);
         Context ctx = new VelocityContext();
-        error(ctx, e);
+        exportError(ctx, fileName, message, line, beginColumn);
         Velocity.evaluate(ctx, out, "templateAdapter",
                 new InputStreamReader(getClass().getResourceAsStream("/errorReport.vm")));
+
+        out.flush();
     }
 
     public static SceneryManagerResult querySceneryManager(HttpServletRequest request, String sceneryXml,
@@ -177,82 +190,81 @@ public class SceneryFilter implements Filter {
      * @param template (relative) path to file
      * @param encoding which encoding to use
      * @param request web request
-     * @param response where to write
+     * @param out where to write
      * @param templateAdapter messy data to export
-     * @param adapt transform each occurence into string
      * @throws java.io.IOException on error reading config/template/data files
      * @throws javax.servlet.ServletException probably on sitemesh issues
      */
     public void handleTemplate(String targetPath, String template, String encoding,
-                               HttpServletRequest request, HttpServletResponse response,
-                       TemplateAdapter templateAdapter, boolean adapt) throws IOException, ServletException {
+                               HttpServletRequest request, PrintWriter out,
+                               TemplateAdapter templateAdapter) throws IOException, TemplateHandlerException, ServletException {
         try {
-            // todo rewriteble default
-            response.setContentType("text/html");
-            PrintWriter out = response.getWriter();
             Sitemesh sitemesh = new SimpleSitemesh(targetPath, request.getRequestURI());
             if (!sitemesh.isActive()) {
                 doHandleTemplate(targetPath, template, encoding, templateAdapter, out);
             } else {
-                StringWriter sout = new StringWriter();
+                StringWriter bodyOut = new StringWriter();
                 templateAdapter.put("base", new URL(new URL(request.getRequestURL().toString()), "/" + request.getContextPath()).toString());
                 // Write the decorator to a memory out
-                doHandleTemplate(targetPath, template, encoding, templateAdapter, new PrintWriter(sout));
+                doHandleTemplate(targetPath, template, encoding, templateAdapter, new PrintWriter(bodyOut));
                 // and decorate it
-                sitemesh.decorate(sout.toString());
+                sitemesh.decorate(bodyOut.toString());
 
                 templateAdapter.put("head", sitemesh.get("head"));
                 templateAdapter.put("body", sitemesh.get("body"));
                 doHandleTemplate(targetPath, sitemesh.getTemplate(), encoding, templateAdapter, out);
             }
+            out.flush();
         } catch (SitemeshException e) {
-            throw new ServletException(e);
+            throw new TemplateHandlerException(e);
         }
     }
 
-    private void doHandleTemplate(String targetPath, String template, String encoding, TemplateAdapter templateAdapter, PrintWriter out) throws ServletException, IOException {
+    private void doHandleTemplate(String targetPath, String template, String encoding, TemplateAdapter templateAdapter, PrintWriter out) throws ServletException, IOException, TemplateHandlerException {
         for (CustomTemplateHandler handler: templateHandlers) {
-            try {
-                if (handler.handle(targetPath, template, encoding, out, templateAdapter)) {
-                    break;
-                }
-            } catch (TemplateHandlerException e) {
-                s_log.error(e);
+            if (handler.handle(targetPath, template, encoding, out, templateAdapter)) {
+                break;
             }
         }
     }
 
-    private void error(Context result, SceneryFileException e) throws IOException, ServletException {
-        s_log.info("Error on " + e.getFileName());
-        FileReader fileReader = new FileReader(e.getFileName());
-        try {
-            BufferedReader reader = new BufferedReader(fileReader);
-            String line;
-            ArrayList<String> lines = new ArrayList<String>();
-            int currentLine = 1;
-            int errorLine = e.getLine();
-            int errorBeginColumn = e.getBeginColumn();
-            int errorEndColumn = e.getEndColumn();
+    private void exportError(Context result, String fileName, String message, int lineNumber, int columnNumber) throws IOException {
+        s_log.info("Error on " + fileName);
 
-            while((line = reader.readLine()) != null) {
-                if (currentLine == errorLine) {
-                    String gambi = "<span style=\"color:red\">";
-                    line = new StringBuffer(line)
-                            .insert(errorBeginColumn - 1, gambi)
-                            .insert(errorEndColumn + gambi.length(), "</span>")
-                            .toString();
+        if (fileName != null) {
+            FileReader fileReader = new FileReader(fileName);
+            try {
+                BufferedReader reader = new BufferedReader(fileReader);
+                String line;
+                ArrayList<String> lines = new ArrayList<String>();
+                int currentLine = 1;
+    
+                while((line = reader.readLine()) != null) {
+                    if (currentLine == lineNumber) {
+                        line =
+                                escapeHtml(line.substring(0, columnNumber-1)) +
+                                "<span style=\"color:red\">" +
+                                escapeHtml(line.substring(columnNumber-1)) +
+                                "</span>";
+                    } else {
+                        line = escapeHtml(line);
+                    }
+                    lines.add(line);
+                    currentLine++;
                 }
-                lines.add(line);
-                currentLine++;
+    
+                result.put("message", message);
+                result.put("errorLine", lineNumber);
+                result.put("errorColumn", columnNumber);
+                result.put("lines", lines);
+            } finally {
+                fileReader.close();
             }
-
-            result.put("message", e.getMessage());
-            result.put("errorLine", errorLine);
-            result.put("errorBeginColumn", e.getBeginColumn());
-            result.put("errorEndColumn", e.getEndColumn());
-            result.put("lines", lines);
-        } finally {
-            fileReader.close();
+        } else {
+            result.put("message", message);
+            result.put("errorLine", lineNumber);
+            result.put("errorColumn", columnNumber);
+            result.put("lines", new ArrayList<String>());
         }
     }
 }
