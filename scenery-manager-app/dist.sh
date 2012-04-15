@@ -8,7 +8,6 @@ if [[ $? == 0 ]] ; then
 
     cp -R src/main/webapp ${DIST}
     cp src/main/sh/* ${DIST}/bin
-    tar cfvz ${DIST}.tar.gz ${DIST}
 
     sudo cp -R "${DIST}" /usr/local/
     sudo ln -sf /usr/local/scenery-app/bin/scn /usr/local/bin/scn

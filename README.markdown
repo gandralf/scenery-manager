@@ -1,7 +1,7 @@
 Scenery Manager
 ===============
 
-To develop a template (jsp, velocity, free maker...), you need all-that-messy-server-side stuff up and running. You have to mess with maven, libraries, databases, endless configuration stuff, right?
+To develop a template (velocity, freemaker, sitemash...), you need all-that-messy-server-side stuff up and running. You have to mess with maven, libraries, databases, endless configuration stuff, right?
 
 That means that you are quite dependent. The more dependent, the less freedom.
 
@@ -9,7 +9,7 @@ But, what if we could get the server-side behavior even before it’s done/confi
 
 ### Emulating the server side behaviour in a proper MVC
 
-A view (usually a jsp/velocity/free marker/... template) gets some data/objects and displays its content, like
+A view (usually a velocity/freemarker/... template) gets some data/objects and displays its content, like
 
     ...
     <h2>Welcome ${user.name}
@@ -30,8 +30,8 @@ Scenery manager supports JSP, velocity and freemarker templates. Use includes, m
 Just don't do and heavy logic method calls/controller stuff there.
 This means that if your template is kind of dumb and just shows information, you are good to go.
 
-For our example, let's asume "/home/index.ftl" (free marker):
-
+For our example, let's asume "/home/index.ftl" (freemarker):
+```ftl
     ...
     <#if user??>
         Welcome back, ${user.name}.
@@ -42,10 +42,10 @@ For our example, let's asume "/home/index.ftl" (free marker):
     <div class="footer">
         Hello app, version ${app.version}. Updated at ${app.updatedAt ?datetime}
     </div>
-    
+```
 
-Fake data files, aka .scn
--------------------------
+Fake data files: .scn files
+---------------------------
 
 You can define the data in a syntax very similar to json. For our example, "/home/john.scn":
 
@@ -93,19 +93,21 @@ It's basically a list of variables and values in the for `name = value;` (don't 
 URL mapping file, aka 'WEB-INF/scenery.xml'
 -------------------------------------------
 The first scenery (logged-in user), will be available in "/john" URI. The second one (not logged in), in "/home".
-
+```xml
     <scenery-manager>
         <scenery-set uri="/john" template="/home/index.ftl" data="/home/john.scn" />
         <scenery-set uri="/home" template="/home/index.ftl" data="/home/anonymous.scn" />
     </scenery-manager>
-
+```
 Running scenery manager app
 ---------------------------
 
-Supose that the demo app is located at $HOME/hello-world, and the wabapp source in ./src/main/webapp. Just run:
+Just run:
 
-    cd <scenery-manager-app directory>
-    ./run.sh -p $HOME/hello-world/src/main/webapp
+    cd <to the webapp directory>
+    scn
+
+It will be listening at port 9090 (by default). Try to access http://localhost:9090/john and http://localhost:9090/home.
 
 Summing up
 ==========
@@ -117,3 +119,10 @@ Scenery manager assigns URLs to a fake data file and a template. And when you ac
 - Minimum overhead
 - Useful even when the server-side component is done
 - Not a prototype solution, but can be used so
+
+Installation
+============
+
+* Requires JRE 1.5+, MacOS or Linux
+* Download a binary distribution from https://github.com/gandralf/scenery-manager/downloads and extract it somewhere, like `/usr/local/`
+* Put `scenery-app/bin` in your path or create a link to `scenery-app/bin/scn`, like `ln -s /usr/local/scenery-app/bin/scn /usr/local/bin/scn`
