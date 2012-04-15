@@ -65,7 +65,30 @@ Let's define another scenery ("/home/anonimous.scn"), for someone that isn't log
         updatedAt = 2010-02-20;
     };
 
-I know I should use a better syntax, like json itself or haml. But, hay! I did it back in 2002!
+I know I should use a better syntax, like json itself or haml. But, hey! I did it back in 2002!
+
+### Syntax
+It's basically a list of variables and values in the for `name = value;` (don't forget the ";"!), like simple values:
+
+    stringValue = "Some string";
+    someReallyAndWeirdString = <![CDATA[
+      Here you can do anything, like use ", = and ; at will
+    ]]>;
+    someNumber = 123;
+    evenDates = 2002-07-20;
+    
+    youCanDefineMapsLikeThis = map: {
+        "saturday" = "happy", 
+        "sunday"   = "#tenso", 
+        "monday"   = "not so great"
+    };
+    listOfValues = collection: {
+        "sun", "mon", "tue", "wed", "thr", "fri", "sat"
+    };
+    andCombineStuff = map: {
+        "hotties" = collection: { "Scarlet", "Kate Upton" },
+        "badAsses" = collection: { "Samuel", "Clint" }
+    };
 
 URL mapping file, aka 'WEB-INF/scenery.xml'
 -------------------------------------------
