@@ -66,7 +66,7 @@ public class SceneryFilter implements Filter {
             if (targetApp.hasSceneryXml()) {
                 SceneryManagerResult smr = querySceneryManager(request,
                         targetApp.getPath() + "/WEB-INF/scenery.xml",
-                        targetApp.getPath(),
+                        targetApp.getDataFilesPath(),
                         targetApp.getClassLoader());
                 String template = smr.getScenery().getTemplate();
                 handleTemplate(targetApp.getPath(), template, smr.getEncoding(), request, new PrintWriter(out),

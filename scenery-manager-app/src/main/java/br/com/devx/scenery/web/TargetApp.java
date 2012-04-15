@@ -10,17 +10,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * todo check path and URL
- */
 public class TargetApp {
     private String m_path;
     private String m_url;
     private ClassLoader m_classLoader;
     private List<CustomTemplateHandler> templateHandlers;
+    private String dataFilesPath;
 
     public TargetApp(String path) {
-        setPath(path);
+        setWebappPath(path);
         CustomTemplateHandler[] standardTemplateHandlers = new CustomTemplateHandler[] {
                 new FreemarkerTemplateHandler(),
                 new br.com.devx.scenery.web.templates.VelocityTemplateHandler()
@@ -33,7 +31,7 @@ public class TargetApp {
         return m_path;
     }
 
-    public void setPath(String path) {
+    public void setWebappPath(String path) {
         // preconditions
         try {
             File file = new File(path).getCanonicalFile();
@@ -101,5 +99,13 @@ public class TargetApp {
         for (String className: classes) {
             addTemplateHandler((CustomTemplateHandler) Class.forName(className).newInstance());
         }
+    }
+
+    public void setDataFilesPath(String dataFilesPath) {
+        this.dataFilesPath = dataFilesPath;
+    }
+
+    public String getDataFilesPath() {
+        return dataFilesPath != null ? dataFilesPath : m_path;
     }
 }

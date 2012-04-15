@@ -27,11 +27,13 @@ public class Main {
             if ("-l".equals(arg)) {
                 port = Integer.parseInt(args[++i]);
             } else if ("-p".equals(arg)) {
-                app.setPath(args[++i]);
+                app.setWebappPath(args[++i]);
             } else if ("-u".equals(arg)) {
                 app.setAlternativeUrl(args[++i]);
             } else if ("-t".equals(arg)) {
                 app.addTemplateHandlers(args[++i]);
+            } else if ("-s".equals(arg)) {
+                app.setDataFilesPath(args[++i]);
             } else if ("/?".equals(arg) || "/h".equals(arg) || "-?".equals(arg) || "-h".equals(arg) || "--help".equals(arg)) {
                 usage();
                 return;

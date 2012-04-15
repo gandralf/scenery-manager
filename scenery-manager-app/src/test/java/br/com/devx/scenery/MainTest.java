@@ -1,5 +1,7 @@
 package br.com.devx.scenery;
 
+import br.com.devx.scenery.web.AppsConfig;
+import br.com.devx.scenery.web.TargetApp;
 import junit.framework.TestCase;
 
 import java.io.IOException;
@@ -17,6 +19,8 @@ public class MainTest extends TestCase {
 
     @Override
     protected void tearDown() throws Exception {
+        TargetApp app = AppsConfig.getInstance().getTargetApp();
+        app.setDataFilesPath(null);
         mainThread.stopServer();
     }
 
@@ -32,6 +36,13 @@ public class MainTest extends TestCase {
         mainThread.start("-p src/test/webapp");
         String sb = fetch("http://localhost:9090/velocity.do");
         assertTrue(sb.contains("Hello"));
+    }
+
+    public void testScnRoot() throws InterruptedException, IOException, ClassNotFoundException, InstantiationException,
+            IllegalAccessException {
+        mainThread.start("-p src/test/webapp -s src/test/webapp/scn");
+        String sb = fetch("http://localhost:9090/velocity.do");
+        assertTrue(sb.contains("Hello, alternative scn root"));
     }
 
     public void testCustomTemplateHandler() throws InterruptedException, IOException, ClassNotFoundException,

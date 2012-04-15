@@ -18,7 +18,7 @@ public class SceneryFilterTest extends HttpUnitTestCase {
         AppsConfig config = AppsConfig.getInstance();
         config.reset();
         m_app = config.getTargetApp();
-        m_app.setPath("src/test/webapp");
+        m_app.setWebappPath("src/test/webapp");
         m_app.addTemplateHandler(new ChanchitoTemplateHandler());
     }
 
