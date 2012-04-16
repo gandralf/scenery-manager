@@ -3,6 +3,7 @@
 <scenery-manager>
     <scenery-set uri="velocity.do" template="velocity/hello.vm" data="velocity/hello.scn">
         <data description="Just an error" test="error=true" file="velocity/hello-error.scn" />
+        <data description="Another error" test="error=2" file="velocity/hello-error-2.scn" />
         <template description="Template error" test="test=vm-error" file="velocity/vm-error.vm" />
     </scenery-set>
 

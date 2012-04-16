@@ -1,0 +1,11 @@
+accidentList = {
+	{
+		id = 1;
+		date = "2-Jan";
+		description = "I was distracted by...";
+	}
+};
+
+hello = "me";
+
+name = "John Doe";

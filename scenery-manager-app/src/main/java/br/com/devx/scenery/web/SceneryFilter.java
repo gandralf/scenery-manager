@@ -243,6 +243,8 @@ public class SceneryFilter implements Filter {
     
                 while((line = reader.readLine()) != null) {
                     if (currentLine == lineNumber) {
+                        // For some weird reason, columnNumber can be bigger then line.length
+                        columnNumber = columnNumber <= line.length() ? columnNumber : 1;
                         line =
                                 escapeHtml(line.substring(0, columnNumber-1)) +
                                 "<span style=\"color:red\">" +

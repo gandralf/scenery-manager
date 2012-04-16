@@ -68,6 +68,12 @@ public class SceneryFilterTest extends HttpUnitTestCase {
                 "&quot;nice. the last one doesn't need that&quot;</span>");
     }
 
+    public void testSceneryError2() throws IOException, SAXException {
+        pageShouldContains("/velocity.do?error=2",
+                "I was distracted by",
+                "};");
+    }
+
     public void testFreemarkerTemplateError() throws IOException, SAXException {
         pageShouldContains("/freemarker.do?test=ftl-error", "How do you do?", "&lt;");
     }
