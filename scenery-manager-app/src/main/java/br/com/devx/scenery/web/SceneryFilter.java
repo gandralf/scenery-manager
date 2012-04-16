@@ -204,7 +204,9 @@ public class SceneryFilter implements Filter {
                 doHandleTemplate(targetPath, template, encoding, templateAdapter, out);
             } else {
                 StringWriter bodyOut = new StringWriter();
-                templateAdapter.put("base", new URL(new URL(request.getRequestURL().toString()), "/" + request.getContextPath()).toString());
+                String base = new URL(new URL(request.getRequestURL().toString()), "/" + request.getContextPath()).toString();
+                base = base.endsWith("/") ? base.substring(0, base.length()-1) : base;
+                templateAdapter.put("base", base);
                 // Write the decorator to a memory out
                 doHandleTemplate(targetPath, template, encoding, templateAdapter, new PrintWriter(bodyOut));
                 // and decorate it
