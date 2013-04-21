@@ -34,4 +34,7 @@
     <scenery-set uri="classloader.do" template="classloader/classloader.vm" data="classloader/classloader.scn">
         <data test="from=lib" description="from WEB-INF/lib" file="classloader/classloader-lib.scn" />
     </scenery-set>
+    
+    <!-- no template handler -->
+    <scenery-set uri="no-template.do" template="no-template/no-template.txt" data="velocity/hello.scn" />
 </scenery-manager>

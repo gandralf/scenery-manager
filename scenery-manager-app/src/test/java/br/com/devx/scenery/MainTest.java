@@ -52,6 +52,13 @@ public class MainTest extends TestCase {
         assertTrue(sb.contains("Hello, Mr. Custom Template"));
     }
 
+    public void testNoTemplateHandler() throws InterruptedException, IOException, ClassNotFoundException,
+            InstantiationException, IllegalAccessException {
+        mainThread.start("-p src/test/webapp");
+        String sb = fetch("http://localhost:9090/no-template.do");
+        assertTrue(sb.contains("No template handler for .txt files"));
+    }
+
     private String fetch(String url) throws IOException {
         InputStream inputStream = new URL(url).openStream();
         StringBuilder sb = new StringBuilder();

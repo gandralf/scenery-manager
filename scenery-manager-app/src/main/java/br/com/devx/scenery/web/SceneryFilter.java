@@ -11,6 +11,7 @@ import br.com.devx.scenery.parser.SceneryParserHelper;
 import br.com.devx.scenery.sitemesh.SimpleSitemesh;
 import br.com.devx.scenery.web.templates.CustomTemplateHandler;
 import br.com.devx.scenery.web.templates.TemplateHandlerException;
+import br.com.devx.scenery.util.IOHelper;
 import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -83,7 +84,7 @@ public class SceneryFilter implements Filter {
             redirect(targetApp, request, response);
         } catch (SceneryFileException e) { // Scn file error
             showSceneryError(out, e);
-        } catch (TemplateHandlerException e) { // Scn file error
+        } catch (TemplateHandlerException e) { // Template error
             showTemplateError(out, e);
         } catch (SceneryManagerException e) { // Wtf error
             throw new ServletException(e);
@@ -193,7 +194,7 @@ public class SceneryFilter implements Filter {
      * @param out where to write
      * @param templateAdapter messy data to export
      * @throws java.io.IOException on error reading config/template/data files
-     * @throws javax.servlet.ServletException probably on sitemesh issues
+     * @throws TemplateHandlerException probably on sitemesh issues
      */
     public void handleTemplate(String targetPath, String template, String encoding,
                                HttpServletRequest request, PrintWriter out,
@@ -223,10 +224,17 @@ public class SceneryFilter implements Filter {
     }
 
     private void doHandleTemplate(String targetPath, String template, String encoding, TemplateAdapter templateAdapter, PrintWriter out) throws ServletException, IOException, TemplateHandlerException {
+        boolean handled = false;
         for (CustomTemplateHandler handler: templateHandlers) {
             if (handler.handle(targetPath, template, encoding, out, templateAdapter)) {
+                handled = true;
                 break;
             }
+        }
+        
+        if (!handled) {
+            s_log.warn("No template handler for " + template);
+            IOHelper.dump(out, targetPath + "/" + template);
         }
     }
 

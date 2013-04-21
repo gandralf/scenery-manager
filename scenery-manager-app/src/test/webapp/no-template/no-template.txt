@@ -1,0 +1,2 @@
+No template handler for .txt files
+=P
